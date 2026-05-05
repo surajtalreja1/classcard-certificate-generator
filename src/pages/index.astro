@@ -1,3 +1,6 @@
+---
+// Static page served via Astro for Webflow Cloud (Cloudflare Workers) deployment.
+---
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,7 +13,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Ballet:opsz@16..72&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/style.css">
 </head>
 
 <body class="v2-ui">
@@ -231,8 +234,8 @@
     <!-- Hidden zone for Batch Printing (Ensures file:/// compatibility) -->
     <div id="batch-print-zone" style="display: none;"></div>
 
-    <script src="skins.js"></script>
-    <script src="app.js"></script>
+    <script is:inline src="/skins.js"></script>
+    <script is:inline src="/app.js"></script>
 </body>
 
 </html>
