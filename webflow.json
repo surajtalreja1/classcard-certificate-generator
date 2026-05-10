@@ -2,5 +2,13 @@
   "cloud": {
     "framework": "astro",
     "project_id": "97e71269-79ad-470d-aeee-3c4d5a9ef6d9"
-  }
+  },
+  "telemetry": {
+    "global": {
+      "allowTelemetry": true,
+      "lastPrompted": 1778417956990,
+      "version": "1.21.0"
+    }
+  },
+  "siteId": "5eede84769925c97fbbc058f"
 }

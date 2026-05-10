@@ -1,5 +1,28 @@
 ---
 // Static page served via Astro for Webflow Cloud (Cloudflare Workers) deployment.
+// All assets are inlined because Webflow Cloud's Astro deployments do not
+// reliably serve files from the `public/` directory or `_astro/` bundles.
+import styleCss from "../assets/style.css?raw";
+import appJs from "../assets/app.js?raw";
+import danceSvg from "../assets/skins/dance.svg?raw";
+import footballSvg from "../assets/skins/football.svg?raw";
+import gymnasticsSvg from "../assets/skins/gymnastics.svg?raw";
+import classcardLogoSvg from "../assets/skins/classcard-logo.svg?raw";
+
+// Percent-encoded data URIs work in any runtime without needing Buffer/btoa.
+const toDataUri = (svg: string) =>
+  `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+
+const SKINS_INLINE = {
+  default: toDataUri(gymnasticsSvg),
+  dance: toDataUri(danceSvg),
+  football: toDataUri(footballSvg),
+  logo: toDataUri(classcardLogoSvg),
+};
+
+// Override the SKINS object that skins.js sets, so the runtime JS uses the
+// inline data URIs instead of trying to fetch the SVGs over HTTP.
+const skinsBootstrap = `const SKINS = ${JSON.stringify(SKINS_INLINE)};`;
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -13,7 +36,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Ballet:opsz@16..72&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="/free-tools/certificates/style.css">
+    <style is:inline set:html={styleCss}></style>
 </head>
 
 <body class="v2-ui">
@@ -234,8 +257,8 @@
     <!-- Hidden zone for Batch Printing (Ensures file:/// compatibility) -->
     <div id="batch-print-zone" style="display: none;"></div>
 
-    <script is:inline src="/free-tools/certificates/skins.js"></script>
-    <script is:inline src="/free-tools/certificates/app.js"></script>
+    <script is:inline set:html={skinsBootstrap}></script>
+    <script is:inline set:html={appJs}></script>
 </body>
 
 </html>
