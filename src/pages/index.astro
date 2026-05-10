@@ -34,7 +34,7 @@ const skinsBootstrap = `const SKINS = ${JSON.stringify(SKINS_INLINE)};`;
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Ballet:opsz@16..72&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Ballet:opsz@16..72&family=Lato:wght@700;900&display=swap"
         rel="stylesheet">
     <style is:inline set:html={styleCss}></style>
 </head>
@@ -63,16 +63,10 @@ const skinsBootstrap = `const SKINS = ${JSON.stringify(SKINS_INLINE)};`;
                         <span style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Preview Zoom</span>
                         <div style="display: flex; gap: 8px; align-items: center;">
                             <span id="preview-zoom-val" style="font-size: 10px; color: var(--classcard-blue);">Auto</span>
-                            <button onclick="resetZoom()" style="background: none; border: none; color: var(--text-muted); font-size: 8px; cursor: pointer; text-transform: uppercase; font-weight: 700; padding: 2px 4px; border: 1px solid var(--border-ui); border-radius: 4px;">Reset</button>
+                            <button onclick="resetZoom()" class="btn btn-outline btn-xs">Reset</button>
                         </div>
                     </div>
                     <input type="range" id="preview-zoom-slider" min="0.3" max="1.5" step="0.01" value="0.9" class="slider-input" oninput="updateManualScale(this.value)">
-                    
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
-                        <span style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Sidebar Width</span>
-                        <span id="sidebar-width-val" style="font-size: 10px; color: var(--classcard-blue);">380px</span>
-                    </div>
-                    <input type="range" id="sidebar-width-slider" min="300" max="800" step="1" value="380" class="slider-input" oninput="updateSidebarWidth(this.value)">
                 </div>
             </div>
 

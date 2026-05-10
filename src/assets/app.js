@@ -149,8 +149,6 @@ let manualScale = null;
 
 function updateSidebarWidth(width) {
     document.documentElement.style.setProperty('--sidebar-width', `${width}px`);
-    document.getElementById('sidebar-width-slider').value = width;
-    document.getElementById('sidebar-width-val').innerText = `${width}px`;
     localStorage.setItem('classcard-sidebar-width', width);
     scalePreview();
 }

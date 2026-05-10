@@ -1,5 +1,4 @@
 /* cert-gen/style-v2.css */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap');
 
 :root {
     --classcard-blue: #0071b2;
@@ -51,7 +50,7 @@ body.v2-ui.theme-dark {
 }
 
 body.v2-ui {
-    font-family: 'Inter', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     background-color: var(--bg-app);
     display: flex;
     height: 100vh;
@@ -192,7 +191,7 @@ body.v2-ui {
     border-radius: 8px;
     padding: 12px 14px;
     color: var(--text-main);
-    font-family: 'Inter', sans-serif;
+    font-family: inherit;
     font-size: 14px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -335,37 +334,57 @@ body.v2-ui {
     padding: 10px !important;
 }
 
+/* Catalyst-style buttons */
 .btn {
-    padding: 14px;
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     border-radius: 8px;
-    font-weight: 700;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 600;
     font-family: inherit;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: none;
-    letter-spacing: 0.5px;
+    border: 1px solid transparent;
+    transition: all 0.15s ease;
 }
 
 .btn-primary {
     background: var(--classcard-blue);
+    border-color: var(--classcard-blue-dark);
     color: white;
-    box-shadow: 0 4px 15px rgba(0, 113, 178, 0.2);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
-.btn-primary:hover { 
+.btn-primary:hover {
     background: var(--classcard-blue-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 113, 178, 0.3);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.btn-primary:active {
+    box-shadow: none;
 }
 
 .btn-outline {
     background: var(--bg-input);
     border: 1px solid var(--border-ui);
     color: var(--text-main);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.btn-outline:hover { 
-    background: var(--border-ui); 
+.btn-outline:hover {
+    background: var(--border-ui);
+}
+
+.btn-xs {
+    padding: 2px 6px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-radius: 4px;
 }
 
 .footer-actions {
@@ -655,12 +674,12 @@ body.v2-ui {
     padding: 10px 8px;
     border: none;
     border-radius: 100px;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 10px;
     background: transparent;
     color: var(--text-muted);
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.15s ease;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -735,30 +754,34 @@ body.v2-ui {
     z-index: 1;
 }
 
-/* UI Updates */
+/* Catalyst-style seal buttons */
 .seal-btn {
     flex: 1;
     padding: 8px;
-    border: 1.5px solid var(--border-ui);
-    border-radius: 6px;
-    background: #f0f0f0; /* Darker background for light mode buttons */
+    border: 1px solid var(--border-ui);
+    border-radius: 8px;
+    background: var(--bg-input);
     color: var(--text-sidebar);
     font-size: 10px;
-    font-weight: 800;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.15s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.seal-btn:hover {
+    background: var(--border-ui);
 }
 
 body.theme-dark .seal-btn {
     background: var(--bg-input);
-    border-width: 1px;
 }
 
 .seal-btn.active {
     background: var(--classcard-blue);
     color: white;
-    border-color: var(--classcard-blue);
-    box-shadow: 0 4px 12px rgba(0, 113, 178, 0.3);
+    border-color: var(--classcard-blue-dark);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .seal-btn.seal-gold {
@@ -810,17 +833,22 @@ body.theme-dark .seal-btn {
     background: transparent;
     color: var(--text-muted);
     font-size: 9px;
-    font-weight: 800;
+    font-weight: 600;
     text-transform: uppercase;
     padding: 4px 10px;
     border-radius: 4px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.15s ease;
+}
+
+.toggle-btn:hover {
+    color: var(--text-main);
 }
 
 .toggle-btn.active {
     background: var(--classcard-blue);
     color: white;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .batch-page {
