@@ -1333,7 +1333,6 @@ body.theme-dark .theme-toggle-btn:hover {
         position: sticky;
         top: 142px;
         z-index: 10;
-        margin-top: 8px;
     }
 
     body.show-edit .sidebar {
@@ -1402,11 +1401,9 @@ body.theme-dark .mobile-top-header h1 {
 
 .mobile-header {
     display: flex;
-    padding: 0 8px 8px;
+    padding: 8px 16px;
     gap: 8px;
     border-top: 1px solid var(--border-ui);
-    margin-top: 0;
-    padding-top: 8px;
 }
 
 .mobile-tab {
