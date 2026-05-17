@@ -6,7 +6,11 @@ function updatePreview() {
     const coach = document.getElementById('coach-input').value;
     const coachLabel = document.getElementById('coach-label-input').value;
     const date = document.getElementById('date-input').value;
-    const dateLabel = document.getElementById('date-label-input').value;
+    const business = document.getElementById('business-input').value;
+    const location = document.getElementById('location-input').value;
+    const website = document.getElementById('website-input').value;
+    const email = document.getElementById('email-input').value;
+    const phone = document.getElementById('phone-input').value;
 
     document.getElementById('preview-tag').innerText = tag;
     document.getElementById('preview-recipient').innerText = recipient;
@@ -15,20 +19,38 @@ function updatePreview() {
     document.getElementById('preview-coach').innerText = coach;
     document.getElementById('preview-coach-label').innerText = coachLabel;
     document.getElementById('preview-date').innerText = date;
-    document.getElementById('preview-date-label').innerText = dateLabel;
+    document.getElementById('preview-business').innerText = business;
+    document.getElementById('preview-location').innerText = location;
+    document.getElementById('preview-website').innerText = website;
+    document.getElementById('preview-email').innerText = email;
+    document.getElementById('preview-phone').innerText = phone;
+}
+
+const BADGE_COLORS = {
+    zinc:   { bg: 'rgba(244,244,245,1)',   color: 'rgba(63,63,70,1)' },
+    red:    { bg: 'rgba(254,226,226,1)',    color: 'rgba(185,28,28,1)' },
+    amber:  { bg: 'rgba(254,243,199,1)',    color: 'rgba(146,64,14,1)' },
+    green:  { bg: 'rgba(220,252,231,1)',    color: 'rgba(22,101,52,1)' },
+    blue:   { bg: 'rgba(219,234,254,1)',    color: 'rgba(30,64,175,1)' },
+    purple: { bg: 'rgba(243,232,255,1)',    color: 'rgba(107,33,168,1)' },
+    pink:   { bg: 'rgba(252,231,243,1)',    color: 'rgba(157,23,77,1)' },
+};
+
+function setBadgeColor(color) {
+    const tag = document.getElementById('preview-tag');
+    const c = BADGE_COLORS[color] || BADGE_COLORS.zinc;
+    tag.style.backgroundColor = c.bg;
+    tag.style.color = c.color;
 }
 
 function setSkin(skinName) {
     const preview = document.getElementById('certificate-preview');
     const bgLayer = document.getElementById('preview-bg-layer');
-    const options = document.querySelectorAll('.skin-option');
 
-    // Reset
     preview.className = 'cert-render-area';
     bgLayer.src = '';
     bgLayer.style.display = 'none';
 
-    // Apply Skin
     preview.classList.add(`skin-${skinName}`);
     if (skinName === 'plain') {
         bgLayer.style.display = 'none';
@@ -38,11 +60,6 @@ function setSkin(skinName) {
         bgLayer.style.display = 'block';
         preview.style.backgroundColor = 'transparent';
     }
-    
-    options.forEach(opt => {
-        opt.classList.remove('active');
-        if (opt.getAttribute('data-skin') === skinName) opt.classList.add('active');
-    });
 }
 
 function handleLogoUpload(event) {
@@ -61,18 +78,44 @@ function handleLogoUpload(event) {
     }
 }
 
+function handleSignatureUpload(event) {
+    const file = event.target.files[0];
+    const preview = document.getElementById('preview-signature');
+    const stamp = preview.parentElement;
+    const status = document.getElementById('sig-file-status');
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            preview.src = e.target.result;
+            stamp.classList.add('has-image');
+            status.innerText = file.name;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
 function handleDownload() {
-    const isBatch = document.getElementById('batch-names-container').style.display === 'block';
+    const isBatch = document.getElementById('batch-names-container').style.display !== 'none';
     const namesText = document.getElementById('batch-names-input').value;
     const singleName = document.getElementById('recipient-input').value || 'Athlete';
     
     let names = [];
     if (isBatch) {
-        names = namesText.split('\n').map(n => n.trim()).filter(n => n !== '');
+        names = namesText.split(/[\n,]+/).map(n => n.trim()).filter(n => n !== '');
         if (names.length === 0) return alert("Please enter names.");
     } else {
         names = [singleName];
     }
+
+    fetch('/free-tools/certificates/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            email: document.getElementById('email-input').value,
+            website: document.getElementById('website-input').value,
+        })
+    }).catch(() => {});
 
     const toast = document.getElementById('status-toast');
     toast.style.display = 'block';
@@ -93,46 +136,57 @@ function handleDownload() {
     const coach = document.getElementById('coach-input').value;
     const date = document.getElementById('date-input').value;
     const coachLabel = document.getElementById('coach-label-input').value;
-    const dateLabel = document.getElementById('date-label-input').value;
+    const business = document.getElementById('business-input').value;
+    const location = document.getElementById('location-input').value;
+    const website = document.getElementById('website-input').value;
+    const email = document.getElementById('email-input').value;
+    const phone = document.getElementById('phone-input').value;
     const sealClass = Array.from(document.getElementById('preview-seal').classList).find(c => c.startsWith('seal-')) || 'seal-none';
     const sealLabel = document.getElementById('preview-seal').getAttribute('data-label') || '';
-    const classcardLogoSrc = document.getElementById('preview-classcard-logo').src;
-    const customLogoSrc = document.getElementById('preview-logo').src;
+    const logoEl = document.getElementById('preview-logo');
+    const hasLogo = logoEl.style.display === 'block';
+    const customLogoSrc = hasLogo ? logoEl.src : '';
+    const sigEl = document.getElementById('preview-signature');
+    const hasSig = sigEl.parentElement.classList.contains('has-image');
+    const signatureSrc = hasSig ? sigEl.src : '';
+    const tagEl = document.getElementById('preview-tag');
+    const tagBg = tagEl.style.backgroundColor || '';
+    const tagColor = tagEl.style.color || '';
 
     let batchHtml = '';
     names.forEach(name => {
-        // Sanitize name to prevent simple HTML injection via textContent logic
         const sanitizedName = name.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        
+
         batchHtml += `
-            <div class="${skinClasses}" style="width: 841px; height: 595px; transform: none; margin: 0 auto; display: flex; page-break-after: always;">
+            <div class="${skinClasses}" style="transform: none; margin: 0 auto; page-break-after: always;">
                 <img class="cert-bg-layer" src="${bgSrc}" style="display: ${bgDisplay}; background-color: ${bgColor}; width: 100%; height: 100%; object-fit: fill; position: absolute; top: 0; left: 0; z-index: 0; pointer-events: none;">
                 <div class="cert-content">
-                    <div class="cert-tag">${tag}</div>
+                    ${hasLogo ? `<div class="cert-logo-top"><img src="${customLogoSrc}" style="display:block;"></div>` : ''}
+                    <div class="cert-tag" style="background-color:${tagBg};color:${tagColor};">${tag}</div>
                     <div class="cert-seal ${sealClass}" data-label="${sealLabel}"></div>
                     <h1 class="cert-headline">${title}</h1>
                     <p class="presented-text">This certificate is proudly presented to</p>
                     <div class="cert-recipient">${sanitizedName}</div>
                     <p class="cert-sub">${sub}</p>
                     <div class="signature-area">
-                        <div class="sig-box">
-                            <div class="sig-line"></div>
+                        ${hasSig ? `<div class="sig-stamp has-image"><img src="${signatureSrc}" style="display:block;"></div>` : ''}
+                        <div class="sig-details">
                             <p class="sig-name">${coach}</p>
                             <p class="sig-label">${coachLabel}</p>
-                        </div>
-                        <div class="sig-box">
-                            <div class="sig-line"></div>
-                            <p class="sig-name">${date}</p>
-                            <p class="sig-label">${dateLabel}</p>
+                            <p class="sig-date">${date}</p>
                         </div>
                     </div>
+                    <div class="cert-org-info">
+                        <span>${business}</span>
+                        <span>${location}</span>
+                    </div>
                 </div>
-                <div class="cert-logo-container left">
-                    <img src="${classcardLogoSrc}" style="display: block;">
+                <div class="cert-contact-info">
+                    <span>${website}</span>
+                    <span>${email}</span>
+                    <span>${phone}</span>
                 </div>
-                <div class="cert-logo-container">
-                    <img src="${customLogoSrc}" style="display: ${customLogoSrc ? 'block' : 'none'};">
-                </div>
+                <p class="cert-generated">Generated on Classcardapp.com</p>
             </div>
         `;
     });
@@ -162,13 +216,23 @@ function updateManualScale(scale) {
 function resetZoom() {
     manualScale = null;
     document.getElementById('preview-zoom-val').innerText = 'Auto';
+    document.getElementById('preview-zoom-slider').value = 0.9;
     scalePreview();
+}
+
+function adjustZoom(delta) {
+    const slider = document.getElementById('preview-zoom-slider');
+    const current = manualScale || parseFloat(slider.value);
+    const next = Math.min(1.5, Math.max(0.3, current + delta));
+    slider.value = next;
+    updateManualScale(next);
 }
 
 function toggleTheme() {
     const body = document.body;
     const isDark = body.classList.toggle('theme-dark');
-    document.getElementById('theme-icon').innerText = isDark ? '☀️' : '🌙';
+    document.getElementById('theme-icon-moon').style.display = isDark ? 'none' : '';
+    document.getElementById('theme-icon-sun').style.display = isDark ? '' : 'none';
     localStorage.setItem('classcard-theme', isDark ? 'dark' : 'light');
 }
 
@@ -176,7 +240,8 @@ function initTheme() {
     const savedTheme = localStorage.getItem('classcard-theme');
     if (savedTheme === 'dark') {
         document.body.classList.add('theme-dark');
-        document.getElementById('theme-icon').innerText = '☀️';
+        document.getElementById('theme-icon-moon').style.display = 'none';
+        document.getElementById('theme-icon-sun').style.display = '';
     }
 }
 
@@ -198,13 +263,24 @@ function scalePreview() {
 
     const availableWidth = container.offsetWidth || window.innerWidth - 400;
     const availableHeight = container.offsetHeight || window.innerHeight - 100;
-    const targetWidth = 841;
-    const targetHeight = 595;
+    const cert = document.querySelector('.cert-render-area');
+    const targetWidth = cert ? cert.offsetWidth : 1123;
+    const targetHeight = cert ? cert.offsetHeight : 794;
     
-    const scaleX = (availableWidth - 40) / targetWidth;
-    const scaleY = (availableHeight - 40) / targetHeight;
-    const scale = window.innerWidth < 850 ? scaleX : Math.min(scaleX, scaleY, 0.9);
-    scaler.style.transform = `scale(${scale})`;
+    const isMobile = window.innerWidth < 850;
+    const pad = isMobile ? 0 : 40;
+    const scaleX = (availableWidth - pad) / targetWidth;
+    const scaleY = (availableHeight - pad) / targetHeight;
+    const scale = isMobile ? scaleX : Math.min(scaleX, scaleY, 0.9);
+    if (isMobile) {
+        const mobilePad = 10;
+        const mobileScale = (availableWidth - mobilePad * 2) / targetWidth;
+        scaler.style.transform = 'none';
+        scaler.style.zoom = mobileScale;
+    } else {
+        scaler.style.zoom = '';
+        scaler.style.transform = `scale(${scale})`;
+    }
 }
 
 window.onload = function() {
@@ -216,10 +292,7 @@ window.onload = function() {
     scalePreview();
     updatePreview();
     setSkin('plain');
-    if (typeof SKINS !== 'undefined' && SKINS.logo) {
-        document.getElementById('ui-logo').src = SKINS.logo;
-        document.getElementById('preview-classcard-logo').src = SKINS.logo;
-    }
+    if (window.innerWidth <= 850) switchMobileTab('edit');
 };
 
 function switchMobileTab(tab) {
@@ -233,11 +306,9 @@ function switchMobileTab(tab) {
 
 function setEntryMode(mode) {
     const isBatch = mode === 'batch';
-    document.getElementById('single-name-container').style.display = isBatch ? 'none' : 'block';
-    document.getElementById('batch-names-container').style.display = isBatch ? 'block' : 'none';
-    document.getElementById('mode-batch').classList.toggle('active', isBatch);
-    document.getElementById('mode-single').classList.toggle('active', !isBatch);
-    document.getElementById('download-btn').innerText = isBatch ? 'Print / Save Batch' : 'Print / Save PDF';
+    document.getElementById('single-name-container').style.display = isBatch ? 'none' : '';
+    document.getElementById('batch-names-container').style.display = isBatch ? '' : 'none';
+    document.getElementById('download-btn').innerText = isBatch ? 'Print Certificates' : 'Print Certificate';
     updatePreview();
 }
 
@@ -245,23 +316,40 @@ let currentSealType = 'none';
 function setSeal(type) {
     currentSealType = type;
     const seal = document.getElementById('preview-seal');
-    const buttons = document.querySelectorAll('.seal-btn');
     seal.className = 'cert-seal';
-    buttons.forEach(btn => btn.classList.remove('active'));
     if (type !== 'none') {
         seal.classList.add('active', `seal-${type}`);
-        const activeBtn = Array.prototype.find.call(buttons, b => b.innerText.toLowerCase().includes(type));
-        if (activeBtn) activeBtn.classList.add('active');
         updateSealLabel();
-    } else {
-        document.getElementById('btn-seal-none').classList.add('active');
     }
 }
 
 function updateSealLabel() {
     const seal = document.getElementById('preview-seal');
     if (currentSealType === 'none') return;
-    const style = document.getElementById('seal-label-style').value;
+    const selected = document.querySelector('#seal-label-listbox .listbox-option.selected');
+    const style = selected ? selected.getAttribute('data-value') : 'ordinal';
     let label = style === 'ordinal' ? (currentSealType === 'gold' ? '1st' : (currentSealType === 'silver' ? '2nd' : '3rd')) : currentSealType.toUpperCase();
     seal.setAttribute('data-label', label);
 }
+
+function toggleListbox(id) {
+    const listbox = document.getElementById(id);
+    const wasOpen = listbox.classList.contains('open');
+    document.querySelectorAll('.listbox.open').forEach(lb => lb.classList.remove('open'));
+    if (!wasOpen) listbox.classList.add('open');
+}
+
+function selectListboxOption(el) {
+    const listbox = el.closest('.listbox');
+    listbox.querySelectorAll('.listbox-option').forEach(opt => opt.classList.remove('selected'));
+    el.classList.add('selected');
+    listbox.querySelector('.listbox-selected').textContent = el.querySelector('span').textContent;
+    listbox.classList.remove('open');
+    updateSealLabel();
+}
+
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.listbox')) {
+        document.querySelectorAll('.listbox.open').forEach(lb => lb.classList.remove('open'));
+    }
+});
