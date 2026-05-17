@@ -1325,14 +1325,9 @@ body.theme-dark .theme-toggle-btn:hover {
         display: none !important;
     }
 
-    .section {
-        display: contents;
-    }
-
     .section-header {
-        position: sticky;
-        top: 142px;
-        z-index: 10;
+        position: relative;
+        top: auto;
     }
 
     body.show-edit .sidebar {
