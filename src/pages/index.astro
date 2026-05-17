@@ -63,15 +63,7 @@ const skinsBootstrap = `const SKINS = ${JSON.stringify(SKINS_INLINE)};`;
     <div class="mobile-print">
         <button class="btn btn-primary" onclick="handleDownload()" style="width: 100%;">Print Certificate</button>
     </div>
-  <div id="status-toast" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: white; padding: 12px 24px; border-radius: 100px; font-size: 13px; font-weight: 700; z-index: 1000; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: all 0.3s; pointer-events: none;">
-Generating...
-</div> <!-- Hidden zone for Batch Printing (Ensures file:/// compatibility) --> <div id="batch-print-zone" style="display: none;"></div>
-
-    <div id="status-toast"
-        style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: white; padding: 12px 24px; border-radius: 100px; font-size: 13px; font-weight: 700; z-index: 1000; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: all 0.3s; pointer-events: none;">
-        Generating...
-    </div>
-
+    <div id="status-toast" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: white; padding: 12px 24px; border-radius: 100px; font-size: 13px; font-weight: 700; z-index: 1000; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: all 0.3s; pointer-events: none;">Generating...</div>
     <div id="batch-print-zone" style="display: none;"></div>
 
     <script is:inline set:html={skinsBootstrap}></script>
