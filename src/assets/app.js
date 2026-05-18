@@ -273,19 +273,25 @@ function scalePreview() {
     const targetWidth = cert ? cert.offsetWidth : 1123;
     const targetHeight = cert ? cert.offsetHeight : 794;
     
-    const isMobile = window.innerWidth < 850;
+    const isMobile = window.matchMedia('(max-width: 850px)').matches;
     const pad = isMobile ? 0 : 40;
     const scaleX = (availableWidth - pad) / targetWidth;
     const scaleY = (availableHeight - pad) / targetHeight;
     const scale = isMobile ? scaleX : Math.min(scaleX, scaleY, 0.9);
+    scaler.style.zoom = '';
     if (isMobile) {
         const mobilePad = 10;
         const mobileScale = (availableWidth - mobilePad * 2) / targetWidth;
-        scaler.style.transform = 'none';
-        scaler.style.zoom = mobileScale;
+        const scaledHeight = targetHeight * mobileScale;
+        scaler.style.transformOrigin = 'top center';
+        scaler.style.transform = `scale(${mobileScale})`;
+        scaler.style.marginLeft = '';
+        container.style.height = (scaledHeight + 20) + 'px';
     } else {
-        scaler.style.zoom = '';
+        scaler.style.transformOrigin = '';
+        scaler.style.marginLeft = '';
         scaler.style.transform = `scale(${scale})`;
+        container.style.height = '';
     }
 }
 
@@ -298,8 +304,19 @@ window.onload = function() {
     scalePreview();
     updatePreview();
     setSkin('plain');
-    if (window.innerWidth <= 850) switchMobileTab('edit');
+    if (window.matchMedia('(max-width: 850px)').matches) {
+        switchMobileTab('edit');
+        updateMobileOffsets();
+        window.addEventListener('resize', updateMobileOffsets);
+    }
 };
+
+function updateMobileOffsets() {
+    var mobileTop = document.querySelector('.mobile-top');
+    if (!mobileTop || !window.matchMedia('(max-width: 850px)').matches) return;
+    var h = mobileTop.offsetHeight;
+    document.documentElement.style.setProperty('--mobile-top-h', h + 'px');
+}
 
 function switchMobileTab(tab) {
     const isEdit = tab === 'edit';
