@@ -1567,7 +1567,7 @@ body.theme-dark .mobile-print .btn-primary {
     }
 
     /* Aggressively hide all UI elements */
-    .sidebar, .preview-container, .mobile-header, .mobile-print, #status-toast, aside, main, nav { 
+    .sidebar, .preview-container, .mobile-top, .mobile-header, .mobile-print, #status-toast, aside, main, nav {
         display: none !important; 
         visibility: hidden !important;
         opacity: 0 !important;
