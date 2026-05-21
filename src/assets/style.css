@@ -301,6 +301,43 @@ body.theme-dark .field-description {
     color: rgba(161, 161, 170, 1);
 }
 
+/* Validation Error States — Catalyst pattern */
+.input-field.input-error {
+    border-color: #ef4444;
+}
+
+.input-field.input-error:hover {
+    border-color: #ef4444;
+}
+
+body.theme-dark .input-field.input-error {
+    border-color: #dc2626;
+}
+
+body.theme-dark .input-field.input-error:hover {
+    border-color: #dc2626;
+}
+
+.field-error {
+    display: none;
+    font-size: 14px;
+    line-height: 1.5rem;
+    color: #dc2626;
+    margin-top: 4px;
+}
+
+.field-error.visible {
+    display: block;
+}
+
+body.theme-dark .field-error {
+    color: #ef4444;
+}
+
+#status-toast.toast-error {
+    background: #dc2626;
+}
+
 /* Catalyst Radio Group */
 .radio-group {
     border: none;

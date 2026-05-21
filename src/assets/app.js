@@ -95,11 +95,41 @@ function handleSignatureUpload(event) {
     }
 }
 
+let toastTimer = null;
+function showToast(message, duration, type) {
+    const toast = document.getElementById('status-toast');
+    toast.innerText = message;
+    toast.classList.toggle('toast-error', type === 'error');
+    toast.style.display = 'block';
+    if (toastTimer) clearTimeout(toastTimer);
+    if (duration) {
+        toastTimer = setTimeout(() => { toast.style.display = 'none'; }, duration);
+    }
+}
+
+function clearEmailError() {
+    const emailInput = document.getElementById('email-input');
+    emailInput.classList.remove('input-error');
+    document.getElementById('email-error').classList.remove('visible');
+}
+
 function handleDownload() {
+    const emailInput = document.getElementById('email-input');
+    const emailValue = emailInput.value.trim();
+    if (!emailValue || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)) {
+        emailInput.classList.add('input-error');
+        document.getElementById('email-error').classList.add('visible');
+        showToast('Please enter your email address to continue', 3000, 'error');
+        emailInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => emailInput.focus(), 400);
+        return;
+    }
+    clearEmailError();
+
     const isBatch = document.getElementById('batch-names-container').style.display !== 'none';
     const namesText = document.getElementById('batch-names-input').value;
     const singleName = document.getElementById('recipient-input').value || 'Athlete';
-    
+
     let names = [];
     if (isBatch) {
         names = namesText.split(/[\n,]+/).map(n => n.trim()).filter(n => n !== '');
@@ -112,14 +142,12 @@ function handleDownload() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            email: document.getElementById('email-input').value,
+            email: emailValue,
             website: document.getElementById('website-input').value,
         })
     }).catch(() => {});
 
-    const toast = document.getElementById('status-toast');
-    toast.style.display = 'block';
-    toast.innerText = 'Preparing Print...';
+    showToast('Preparing Print...');
 
     const batchZone = document.getElementById('batch-print-zone');
     batchZone.innerHTML = '';
@@ -193,7 +221,7 @@ function handleDownload() {
     batchZone.innerHTML = batchHtml;
 
     setTimeout(() => {
-        toast.style.display = 'none';
+        document.getElementById('status-toast').style.display = 'none';
         window.print();
     }, 500);
 }
