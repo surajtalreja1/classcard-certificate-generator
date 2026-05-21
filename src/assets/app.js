@@ -222,7 +222,13 @@ function handleDownload() {
 
     setTimeout(() => {
         document.getElementById('status-toast').style.display = 'none';
+        batchZone.style.display = 'block';
+        document.body.classList.add('printing');
+
         window.print();
+
+        document.body.classList.remove('printing');
+        batchZone.style.display = 'none';
     }, 500);
 }
 

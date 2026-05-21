@@ -1595,25 +1595,35 @@ body.theme-dark .mobile-print .btn-primary {
     transform: none !important;
 }
 
+/* JS-driven print mode: hide everything except batch-print-zone */
+body.printing > *:not(#batch-print-zone):not(script):not(style) {
+    display: none !important;
+    visibility: hidden !important;
+}
+body.printing > #batch-print-zone {
+    display: block !important;
+    visibility: visible !important;
+}
+
 @media print {
     /* Critical: Hide high-level UI containers on ALL devices */
-    html, body { 
-        background: white !important; 
-        height: auto !important; 
+    html, body {
+        background: white !important;
+        height: auto !important;
         overflow: visible !important;
     }
 
     /* Aggressively hide all UI elements */
-    .sidebar, .preview-container, .mobile-top, .mobile-header, .mobile-print, #status-toast, aside, main, nav {
-        display: none !important; 
+    .sidebar, .preview-container, .mobile-top, .mobile-header, .mobile-print, #status-toast, aside, main, nav, .resizer, .zoom-toolbar {
+        display: none !important;
         visibility: hidden !important;
         opacity: 0 !important;
         position: absolute !important;
         left: -9999px !important;
     }
-    
-    #batch-print-zone { 
-        display: block !important; 
+
+    #batch-print-zone {
+        display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
         position: static !important;
