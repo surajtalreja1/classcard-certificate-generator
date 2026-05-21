@@ -232,6 +232,15 @@ function handleDownload() {
     }, 500);
 }
 
+window.addEventListener('beforeprint', () => {
+    document.body.classList.add('printing');
+});
+window.addEventListener('afterprint', () => {
+    document.body.classList.remove('printing');
+    const bz = document.getElementById('batch-print-zone');
+    if (bz) bz.style.display = 'none';
+});
+
 // Global state for layout
 let manualScale = null;
 
