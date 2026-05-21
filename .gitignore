@@ -9,3 +9,8 @@ dist
 *.log
 Classcard Certificate Generator.zip
 .claude/
+
+# Playwright
+test-results/
+playwright-report/
+blob-report/
