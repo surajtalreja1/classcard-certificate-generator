@@ -9,6 +9,7 @@ dist
 *.log
 Classcard Certificate Generator.zip
 .claude/
+catalyst-ui-kit/
 
 # Playwright
 test-results/
