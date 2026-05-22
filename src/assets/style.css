@@ -529,6 +529,11 @@ body.theme-dark label.radio-label {
     grid-template-columns: repeat(5, 1fr);
 }
 
+/* Tighter spacing for thumbnail-card grids */
+.card-radio-grid.with-thumbs {
+    gap: 8px;
+}
+
 .card-radio {
     position: relative;
     display: flex;
@@ -583,9 +588,9 @@ body.theme-dark label.radio-label {
 /* Card with thumbnail above the label */
 .card-radio.card-radio-thumb-host {
     flex-direction: column;
-    gap: 6px;
-    padding: 8px 4px;
-    height: 100px;
+    gap: 4px;
+    padding: 6px 4px;
+    height: 84px;
     box-sizing: border-box;
     overflow: hidden;
     min-width: 0;
@@ -600,12 +605,14 @@ body.theme-dark label.radio-label {
     text-overflow: ellipsis;
     white-space: nowrap;
     padding: 0 2px;
+    flex-shrink: 0;
 }
 
 .card-radio-thumb {
     display: block;
     width: 100%;
-    aspect-ratio: 4 / 3;
+    height: 50px;
+    flex-shrink: 0;
     border-radius: 4px;
     background-color: #fafafa;
     background-size: cover;
