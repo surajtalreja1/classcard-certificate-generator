@@ -87,6 +87,7 @@ function handleBackgroundUpload(event) {
     const bgLayer = document.getElementById('preview-bg-layer');
     const preview = document.getElementById('certificate-preview');
     const status = document.getElementById('bg-file-status');
+    const removeBtn = document.getElementById('bg-remove-btn');
 
     if (file) {
         const reader = new FileReader();
@@ -97,9 +98,26 @@ function handleBackgroundUpload(event) {
             bgLayer.style.objectFit = 'cover';
             preview.style.backgroundColor = 'transparent';
             status.innerText = file.name;
+            if (removeBtn) removeBtn.style.display = 'flex';
         };
         reader.readAsDataURL(file);
     }
+}
+
+function removeBackgroundUpload() {
+    const bgLayer = document.getElementById('preview-bg-layer');
+    const preview = document.getElementById('certificate-preview');
+    const status = document.getElementById('bg-file-status');
+    const removeBtn = document.getElementById('bg-remove-btn');
+    const fileInput = document.getElementById('bg-upload');
+
+    customBgDataUrl = '';
+    bgLayer.src = '';
+    bgLayer.style.display = 'none';
+    preview.style.backgroundColor = '#ffffff';
+    status.innerText = 'Upload Background...';
+    if (removeBtn) removeBtn.style.display = 'none';
+    if (fileInput) fileInput.value = '';
 }
 
 function handleLogoUpload(event) {

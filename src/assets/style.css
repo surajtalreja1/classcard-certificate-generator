@@ -585,11 +585,21 @@ body.theme-dark label.radio-label {
     flex-direction: column;
     gap: 6px;
     padding: 8px 4px;
+    height: 100px;
+    box-sizing: border-box;
+    overflow: hidden;
+    min-width: 0;
 }
 
 .card-radio-thumb-host .card-radio-text {
     font-size: 12px;
-    line-height: 1;
+    line-height: 1.2;
+    text-align: center;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 0 2px;
 }
 
 .card-radio-thumb {
@@ -853,6 +863,62 @@ body.theme-dark .listbox-check {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+}
+
+.custom-file-upload > span {
+    display: inline-block;
+    max-width: calc(100% - 24px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+/* Upload row with remove button */
+.upload-with-remove {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+    min-width: 0;
+}
+
+.upload-with-remove .custom-file-upload {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.btn-remove-upload {
+    flex: 0 0 auto;
+    width: 36px;
+    border: 1px solid var(--border-ui);
+    background: var(--bg-input);
+    border-radius: 6px;
+    color: rgba(24, 24, 27, 0.6);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.15s;
+    padding: 0;
+}
+
+.btn-remove-upload:hover {
+    background: rgba(239, 68, 68, 0.08);
+    border-color: rgba(239, 68, 68, 0.5);
+    color: #dc2626;
+}
+
+body.theme-dark .btn-remove-upload {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+body.theme-dark .btn-remove-upload:hover {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
 }
 
 .custom-file-upload:hover {
