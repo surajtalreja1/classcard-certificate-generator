@@ -1,56 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 842 595">
-  <!-- Generator: Adobe Illustrator 30.3.0, SVG Export Plug-In . SVG Version: 2.1.3 Build 182)  -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 842 595">
   <defs>
     <style>
-      .st0 {
-        opacity: .9;
-      }
-
-      .st0, .st1, .st2 {
-        fill: #f6e308;
-      }
-
-      .st0, .st1, .st2, .st3, .st4 {
-        isolation: isolate;
-      }
-
-      .st1 {
-        opacity: .8;
-      }
-
-      .st2 {
-        opacity: .4;
-      }
-
-      .st3 {
-        opacity: .1;
-      }
-
-      .st3, .st4 {
-        fill: #0072b2;
-      }
-
-      .st4 {
-        opacity: .2;
-      }
-
-      .st5 {
-        fill: #f6f8f9;
-      }
+      .fb-bg { fill: #f8fbf6; }
+      .fb-green { fill: #16a34a; opacity: .1; }
+      .fb-green-strong { fill: #15803d; opacity: .2; }
+      .fb-grass { fill: #22c55e; opacity: .08; }
+      .fb-gold { fill: #eab308; opacity: .55; }
     </style>
   </defs>
-  <rect class="st5" width="842" height="595"/>
-  <path class="st3" d="M842,0v549.6c-94.8-41.3-181.5-103.2-252.9-184.1-18.4-20.9-35.8-43-52-66.3-4.3-6.2-8.6-12.5-12.7-18.9-42.1-64.8-72.5-133.7-91.9-204.4-6.9-25.1-12.3-50.4-16.4-75.8h425.9Z"/>
-  <path class="st3" d="M286.7,77.3c0,105.2-78,192.2-179.2,206.3-9.5,1.3-19.2,2-29.1,2-27.7,0-54.1-5.4-78.3-15.2V0h271.9c9.6,23.9,14.8,50,14.8,77.3h0Z"/>
-  <path class="st3" d="M842,215.8v379.2h-338.5c-18.4-36.7-28.7-78.2-28.7-122.1s4.5-56.7,12.8-82.8c10.6-33.6,27.6-64.4,49.5-91,33.2-40.3,77.7-71,128.7-87.1,26-8.2,53.8-12.7,82.5-12.7s64.4,5.8,93.6,16.4h.1Z"/>
-  <circle class="st2" cx="279.9" cy="453.9" r="112.9"/>
-  <circle class="st3" cx="501.5" cy="225.8" r="165"/>
-  <circle class="st3" cx="224" cy="403.1" r="72.3"/>
-  <circle class="st3" cx="82.8" cy="474.1" r="31.8" transform="translate(-77.7 20.4) rotate(-9.6)"/>
-  <circle class="st4" cx="365.6" cy="527.5" r="23.6"/>
-  <circle class="st0" cx="737" cy="343.1" r="30"/>
-  <path class="st3" d="M112.3,348.3c0,34.4-4,67.8-11.6,99.8h0c-4.7,19.8-10.8,39.1-18.1,57.8-12.4,31.7-28.5,61.6-47.8,89.1H0V58.2c56,61.5,94.5,139.3,107.5,225.5,3.2,21.1,4.8,42.7,4.8,64.7h0Z"/>
-  <circle class="st1" cx="228.5" cy="158.5" r="62.5"/>
-  <path class="st2" d="M792.6,43.2c0,72.2-58.6,130.8-130.8,130.8s-2.4,0-3.6,0c-63.6-1.7-115.9-48.9-125.6-110.2-1.1-6.7-1.6-13.5-1.6-20.5,0-15.1,2.6-29.6,7.3-43.1h247c4.7,13.5,7.3,28,7.3,43.1h0Z"/>
+  <rect class="fb-bg" width="842" height="595"/>
+  <!-- Field stripe bands (alternating tones of green) -->
+  <rect class="fb-green" x="0" y="0" width="120" height="595"/>
+  <rect class="fb-grass" x="240" y="0" width="120" height="595"/>
+  <rect class="fb-green" x="480" y="0" width="120" height="595"/>
+  <rect class="fb-grass" x="720" y="0" width="122" height="595"/>
+  <!-- White background overlay to soften stripes (leaves center mostly clear) -->
+  <rect fill="#fdfdf9" opacity=".5" width="842" height="595"/>
+  <!-- Center circle (football field) -->
+  <circle cx="421" cy="297" r="180" fill="none" stroke="#15803d" stroke-width="1.5" opacity=".15"/>
+  <circle cx="421" cy="297" r="8" fill="#15803d" opacity=".25"/>
+  <!-- Top-left stylized soccer ball -->
+  <g transform="translate(105 105)" opacity=".3">
+    <circle r="55" fill="#f8fbf6"/>
+    <circle r="55" fill="none" stroke="#15803d" stroke-width="1.5"/>
+    <polygon points="0,-26 22,-13 22,13 0,26 -22,13 -22,-13" fill="#18181b" opacity=".25"/>
+    <line x1="0" y1="-26" x2="0" y2="-50" stroke="#15803d" stroke-width="1" opacity=".6"/>
+    <line x1="22" y1="-13" x2="44" y2="-26" stroke="#15803d" stroke-width="1" opacity=".6"/>
+    <line x1="22" y1="13" x2="44" y2="26" stroke="#15803d" stroke-width="1" opacity=".6"/>
+    <line x1="0" y1="26" x2="0" y2="50" stroke="#15803d" stroke-width="1" opacity=".6"/>
+    <line x1="-22" y1="13" x2="-44" y2="26" stroke="#15803d" stroke-width="1" opacity=".6"/>
+    <line x1="-22" y1="-13" x2="-44" y2="-26" stroke="#15803d" stroke-width="1" opacity=".6"/>
+  </g>
+  <!-- Bottom-right large ball -->
+  <g transform="translate(730 475)" opacity=".3">
+    <circle r="62" fill="#f8fbf6"/>
+    <circle r="62" fill="none" stroke="#15803d" stroke-width="2"/>
+    <polygon points="0,-30 26,-15 26,15 0,30 -26,15 -26,-15" fill="#18181b" opacity=".25"/>
+  </g>
+  <!-- Gold accent stars (winning) -->
+  <g class="fb-gold">
+    <polygon points="180,490 184,500 195,500 186,506 189,517 180,510 171,517 174,506 165,500 176,500"/>
+    <polygon points="700,90 703,99 712,99 705,104 707,113 700,108 693,113 695,104 688,99 697,99"/>
+    <polygon points="420,75 423,84 432,84 425,89 427,98 420,93 413,98 415,89 408,84 417,84"/>
+  </g>
+  <!-- Goal post lines (corners) -->
+  <line x1="0" y1="40" x2="60" y2="40" stroke="#15803d" stroke-width="2" opacity=".3"/>
+  <line x1="60" y1="40" x2="60" y2="0" stroke="#15803d" stroke-width="2" opacity=".3"/>
+  <line x1="842" y1="555" x2="782" y2="555" stroke="#15803d" stroke-width="2" opacity=".3"/>
+  <line x1="782" y1="555" x2="782" y2="595" stroke="#15803d" stroke-width="2" opacity=".3"/>
 </svg>
