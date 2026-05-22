@@ -84,73 +84,113 @@ function setSkin(skinName) {
 
 function handleBackgroundUpload(event) {
     const file = event.target.files[0];
+    if (!file) return;
     const bgLayer = document.getElementById('preview-bg-layer');
     const preview = document.getElementById('certificate-preview');
-    const status = document.getElementById('bg-file-status');
-    const removeBtn = document.getElementById('bg-remove-btn');
+    const uploadBtn = document.getElementById('bg-upload-btn');
+    const previewRow = document.getElementById('bg-preview-row');
+    const thumb = document.getElementById('bg-preview-thumb');
+    const statusText = document.getElementById('bg-file-status');
 
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            customBgDataUrl = e.target.result;
-            bgLayer.src = customBgDataUrl;
-            bgLayer.style.display = 'block';
-            bgLayer.style.objectFit = 'cover';
-            preview.style.backgroundColor = 'transparent';
-            status.innerText = file.name;
-            if (removeBtn) removeBtn.style.display = 'flex';
-        };
-        reader.readAsDataURL(file);
-    }
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        customBgDataUrl = e.target.result;
+        bgLayer.src = customBgDataUrl;
+        bgLayer.style.display = 'block';
+        bgLayer.style.objectFit = 'cover';
+        preview.style.backgroundColor = 'transparent';
+        thumb.src = customBgDataUrl;
+        statusText.innerText = file.name;
+        uploadBtn.style.display = 'none';
+        previewRow.style.display = 'flex';
+    };
+    reader.readAsDataURL(file);
 }
 
 function removeBackgroundUpload() {
     const bgLayer = document.getElementById('preview-bg-layer');
     const preview = document.getElementById('certificate-preview');
-    const status = document.getElementById('bg-file-status');
-    const removeBtn = document.getElementById('bg-remove-btn');
+    const uploadBtn = document.getElementById('bg-upload-btn');
+    const previewRow = document.getElementById('bg-preview-row');
     const fileInput = document.getElementById('bg-upload');
 
     customBgDataUrl = '';
     bgLayer.src = '';
     bgLayer.style.display = 'none';
     preview.style.backgroundColor = '#ffffff';
-    status.innerText = 'Upload Background...';
-    if (removeBtn) removeBtn.style.display = 'none';
+    uploadBtn.style.display = '';
+    previewRow.style.display = 'none';
     if (fileInput) fileInput.value = '';
 }
 
 function handleLogoUpload(event) {
     const file = event.target.files[0];
+    if (!file) return;
     const preview = document.getElementById('preview-logo');
-    const status = document.getElementById('file-status');
+    const uploadBtn = document.getElementById('logo-upload-btn');
+    const previewRow = document.getElementById('logo-preview-row');
+    const thumb = document.getElementById('logo-preview-thumb');
+    const statusText = document.getElementById('logo-status-text');
 
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            preview.src = e.target.result;
-            preview.style.display = 'block';
-            status.innerText = file.name;
-        };
-        reader.readAsDataURL(file);
-    }
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+        thumb.src = e.target.result;
+        statusText.innerText = file.name;
+        uploadBtn.style.display = 'none';
+        previewRow.style.display = 'flex';
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeLogo() {
+    const preview = document.getElementById('preview-logo');
+    const uploadBtn = document.getElementById('logo-upload-btn');
+    const previewRow = document.getElementById('logo-preview-row');
+    const fileInput = document.getElementById('logo-upload');
+
+    preview.src = '';
+    preview.style.display = 'none';
+    uploadBtn.style.display = '';
+    previewRow.style.display = 'none';
+    if (fileInput) fileInput.value = '';
 }
 
 function handleSignatureUpload(event) {
     const file = event.target.files[0];
+    if (!file) return;
     const preview = document.getElementById('preview-signature');
     const stamp = preview.parentElement;
-    const status = document.getElementById('sig-file-status');
+    const uploadBtn = document.getElementById('signature-upload-btn');
+    const previewRow = document.getElementById('signature-preview-row');
+    const thumb = document.getElementById('signature-preview-thumb');
+    const statusText = document.getElementById('signature-status-text');
 
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            preview.src = e.target.result;
-            stamp.classList.add('has-image');
-            status.innerText = file.name;
-        };
-        reader.readAsDataURL(file);
-    }
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        preview.src = e.target.result;
+        stamp.classList.add('has-image');
+        thumb.src = e.target.result;
+        statusText.innerText = file.name;
+        uploadBtn.style.display = 'none';
+        previewRow.style.display = 'flex';
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeSignature() {
+    const preview = document.getElementById('preview-signature');
+    const stamp = preview.parentElement;
+    const uploadBtn = document.getElementById('signature-upload-btn');
+    const previewRow = document.getElementById('signature-preview-row');
+    const fileInput = document.getElementById('signature-upload');
+
+    preview.src = '';
+    stamp.classList.remove('has-image');
+    uploadBtn.style.display = '';
+    previewRow.style.display = 'none';
+    if (fileInput) fileInput.value = '';
 }
 
 let toastTimer = null;
