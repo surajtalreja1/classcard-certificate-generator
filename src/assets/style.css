@@ -1325,7 +1325,7 @@ body.theme-dark .theme-toggle-btn:hover {
 .cert-recipient {
     font-family: "Ballet", cursive;
     font-size: 84px;
-    color: var(--classcard-blue);
+    color: #030712;
     margin: 10px 0;
 }
 
@@ -1474,9 +1474,6 @@ body.theme-dark .theme-toggle-btn:hover {
 .cert-render-area.skin-plain .cert-tag {
     background: rgba(244, 244, 245, 1);
     color: #374151;
-}
-.cert-render-area.skin-plain .cert-recipient {
-    color: #030712;
 }
 
 /* MOBILE RESPONSIVE V2 */
