@@ -147,6 +147,14 @@ function handleDownload() {
         })
     }).catch(() => {});
 
+    // Meta Pixel: track Lead conversion
+    if (typeof fbq !== 'undefined') {
+        fbq('track', 'Lead', {
+            content_name: 'Certificate Generator',
+            content_category: 'free-tools'
+        });
+    }
+
     showToast('Preparing Print...');
 
     const batchZone = document.getElementById('batch-print-zone');
