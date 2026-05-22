@@ -5,10 +5,7 @@
   },
   "telemetry": {
     "global": {
-      "allowTelemetry": true,
-      "lastPrompted": 1778417956990,
-      "version": "1.21.0"
+      "allowTelemetry": true
     }
-  },
-  "siteId": "5eede84769925c97fbbc058f"
+  }
 }
