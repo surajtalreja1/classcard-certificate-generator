@@ -580,6 +580,63 @@ body.theme-dark label.radio-label {
     color: white;
 }
 
+/* Card with thumbnail above the label */
+.card-radio.card-radio-thumb-host {
+    flex-direction: column;
+    gap: 6px;
+    padding: 8px 4px;
+}
+
+.card-radio-thumb-host .card-radio-text {
+    font-size: 12px;
+    line-height: 1;
+}
+
+.card-radio-thumb {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: 4px;
+    background-color: #fafafa;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border: 1px solid rgba(24, 24, 27, 0.08);
+    pointer-events: none;
+}
+
+.thumb-plain {
+    background-color: #ffffff;
+    background-image: linear-gradient(135deg, transparent 47%, rgba(24, 24, 27, 0.08) 47%, rgba(24, 24, 27, 0.08) 53%, transparent 53%);
+}
+
+.thumb-upload {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(24, 24, 27, 0.04);
+    color: rgba(24, 24, 27, 0.6);
+}
+
+.card-radio:has(:checked) .thumb-upload {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white;
+}
+
+body.theme-dark .card-radio-thumb {
+    background-color: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.theme-dark .thumb-plain {
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+body.theme-dark .thumb-upload {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.6);
+}
+
 body.theme-dark .card-radio {
     background: rgba(255, 255, 255, 0.05);
     border-color: rgba(255, 255, 255, 0.15);
