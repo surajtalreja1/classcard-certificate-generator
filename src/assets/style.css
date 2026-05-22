@@ -525,6 +525,10 @@ body.theme-dark label.radio-label {
     grid-template-columns: repeat(4, 1fr);
 }
 
+.card-radio-grid.cols-5 {
+    grid-template-columns: repeat(5, 1fr);
+}
+
 .card-radio {
     position: relative;
     display: flex;

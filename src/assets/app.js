@@ -43,22 +43,62 @@ function setBadgeColor(color) {
     tag.style.color = c.color;
 }
 
+let customBgDataUrl = '';
+
 function setSkin(skinName) {
     const preview = document.getElementById('certificate-preview');
     const bgLayer = document.getElementById('preview-bg-layer');
+    const customBgContainer = document.getElementById('custom-bg-container');
 
     preview.className = 'cert-render-area';
     bgLayer.src = '';
     bgLayer.style.display = 'none';
 
+    // Toggle the upload UI only when the Custom card is selected
+    if (customBgContainer) {
+        customBgContainer.style.display = skinName === 'custom' ? 'block' : 'none';
+    }
+
     preview.classList.add(`skin-${skinName}`);
     if (skinName === 'plain') {
         bgLayer.style.display = 'none';
         preview.style.backgroundColor = '#ffffff';
+        bgLayer.style.objectFit = 'fill';
+    } else if (skinName === 'custom') {
+        if (customBgDataUrl) {
+            bgLayer.src = customBgDataUrl;
+            bgLayer.style.display = 'block';
+            bgLayer.style.objectFit = 'cover';
+            preview.style.backgroundColor = 'transparent';
+        } else {
+            // No image uploaded yet — show white canvas
+            preview.style.backgroundColor = '#ffffff';
+        }
     } else if (typeof SKINS !== 'undefined' && SKINS[skinName]) {
         bgLayer.src = SKINS[skinName];
         bgLayer.style.display = 'block';
+        bgLayer.style.objectFit = 'fill';
         preview.style.backgroundColor = 'transparent';
+    }
+}
+
+function handleBackgroundUpload(event) {
+    const file = event.target.files[0];
+    const bgLayer = document.getElementById('preview-bg-layer');
+    const preview = document.getElementById('certificate-preview');
+    const status = document.getElementById('bg-file-status');
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            customBgDataUrl = e.target.result;
+            bgLayer.src = customBgDataUrl;
+            bgLayer.style.display = 'block';
+            bgLayer.style.objectFit = 'cover';
+            preview.style.backgroundColor = 'transparent';
+            status.innerText = file.name;
+        };
+        reader.readAsDataURL(file);
     }
 }
 
@@ -165,6 +205,7 @@ function handleDownload() {
     const bgSrc = originalCert.querySelector('#preview-bg-layer').src;
     const bgDisplay = originalCert.querySelector('#preview-bg-layer').style.display;
     const bgColor = originalCert.querySelector('#preview-bg-layer').style.backgroundColor;
+    const bgObjectFit = originalCert.querySelector('#preview-bg-layer').style.objectFit || 'fill';
     
     const tag = document.getElementById('tag-input').value;
     const title = document.getElementById('title-input').value;
@@ -195,7 +236,7 @@ function handleDownload() {
 
         batchHtml += `
             <div class="${skinClasses}" style="transform: none; margin: 0 auto; page-break-after: always;">
-                <img class="cert-bg-layer" src="${bgSrc}" style="display: ${bgDisplay}; background-color: ${bgColor}; width: 100%; height: 100%; object-fit: fill; position: absolute; top: 0; left: 0; z-index: 0; pointer-events: none;">
+                <img class="cert-bg-layer" src="${bgSrc}" style="display: ${bgDisplay}; background-color: ${bgColor}; width: 100%; height: 100%; object-fit: ${bgObjectFit}; position: absolute; top: 0; left: 0; z-index: 0; pointer-events: none;">
                 <div class="cert-content">
                     ${hasLogo ? `<div class="cert-logo-top"><img src="${customLogoSrc}" style="display:block;"></div>` : ''}
                     <div class="cert-tag" style="background-color:${tagBg};color:${tagColor};">${tag}</div>
