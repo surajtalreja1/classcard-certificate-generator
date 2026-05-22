@@ -1296,7 +1296,7 @@ body.theme-dark .theme-toggle-btn:hover {
 .cert-tag {
     font-family: "Lato", sans-serif;
     font-weight: 500;
-    color: rgba(63, 63, 70, 1);
+    color: #374151;
     background: rgba(244, 244, 245, 1);
     padding: 2px 6px;
     border-radius: 6px;
@@ -1312,14 +1312,14 @@ body.theme-dark .theme-toggle-btn:hover {
     font-weight: 900;
     font-size: 52px;
     letter-spacing: -2px;
-    color: #1a1a1a;
+    color: #030712;
 }
 
 .presented-text {
     font-family: "Lato", sans-serif;
     font-size: 14px;
     font-weight: 400;
-    color: #999;
+    color: #374151;
 }
 
 .cert-recipient {
@@ -1333,7 +1333,7 @@ body.theme-dark .theme-toggle-btn:hover {
     font-family: "Lato", sans-serif;
     font-size: 14px;
     line-height: 1.6;
-    color: #555;
+    color: #374151;
     max-width: 600px;
 }
 
@@ -1373,7 +1373,7 @@ body.theme-dark .theme-toggle-btn:hover {
     font-family: "Lato", sans-serif;
     font-weight: 700;
     font-size: 14px;
-    color: #1a1a1a;
+    color: #030712;
 }
 
 .sig-label {
@@ -1381,20 +1381,20 @@ body.theme-dark .theme-toggle-btn:hover {
     font-size: 14px;
     font-weight: 700;
     text-transform: uppercase;
-    color: #999;
+    color: #374151;
 }
 
 .sig-date {
     font-family: "Lato", sans-serif;
     font-size: 14px;
-    color: #777;
+    color: #374151;
     margin-top: 2px;
 }
 
 .cert-org-info {
     font-family: "Lato", sans-serif;
     font-size: 14px;
-    color: #999;
+    color: #374151;
     margin-top: 8px;
     display: flex;
     gap: 6px;
@@ -1413,7 +1413,7 @@ body.theme-dark .theme-toggle-btn:hover {
     text-align: center;
     font-family: "Lato", sans-serif;
     font-size: 14px;
-    color: #bbb;
+    color: #374151;
     display: flex;
     justify-content: center;
     gap: 6px;
@@ -1456,7 +1456,7 @@ body.theme-dark .theme-toggle-btn:hover {
     text-align: center;
     font-family: "Lato", sans-serif;
     font-size: 11px;
-    color: #bbb;
+    color: #374151;
     display: none;
     padding-bottom: 12px;
 }
@@ -1473,10 +1473,10 @@ body.theme-dark .theme-toggle-btn:hover {
 }
 .cert-render-area.skin-plain .cert-tag {
     background: rgba(244, 244, 245, 1);
-    color: rgba(63, 63, 70, 1);
+    color: #374151;
 }
 .cert-render-area.skin-plain .cert-recipient {
-    color: #000;
+    color: #030712;
 }
 
 /* MOBILE RESPONSIVE V2 */
