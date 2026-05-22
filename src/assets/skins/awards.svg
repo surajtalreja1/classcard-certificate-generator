@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 842 595">
+  <defs>
+    <style>
+      .aw-bg { fill: #fdf9f0; }
+      .aw-gold { fill: #ca8a04; opacity: .25; }
+      .aw-gold-strong { fill: #b45309; opacity: .35; }
+      .aw-gold-soft { fill: #eab308; opacity: .15; }
+      .aw-burgundy { fill: #7f1d1d; opacity: .1; }
+    </style>
+  </defs>
+  <rect class="aw-bg" width="842" height="595"/>
+  <!-- Left laurel branch (curve + leaves) -->
+  <g transform="translate(60 200)">
+    <path d="M0,140 Q40,80 80,140 Q120,200 160,140" stroke="#b45309" stroke-width="3" fill="none" opacity=".4"/>
+    <!-- Leaves on the branch -->
+    <ellipse class="aw-gold" cx="15" cy="115" rx="14" ry="6" transform="rotate(-40 15 115)"/>
+    <ellipse class="aw-gold" cx="35" cy="95" rx="14" ry="6" transform="rotate(-25 35 95)"/>
+    <ellipse class="aw-gold" cx="55" cy="85" rx="14" ry="6" transform="rotate(-10 55 85)"/>
+    <ellipse class="aw-gold" cx="80" cy="80" rx="14" ry="6" transform="rotate(5 80 80)"/>
+    <ellipse class="aw-gold" cx="105" cy="85" rx="14" ry="6" transform="rotate(20 105 85)"/>
+    <ellipse class="aw-gold" cx="125" cy="95" rx="14" ry="6" transform="rotate(35 125 95)"/>
+    <ellipse class="aw-gold" cx="145" cy="115" rx="14" ry="6" transform="rotate(50 145 115)"/>
+  </g>
+  <!-- Right laurel branch (mirrored) -->
+  <g transform="translate(622 200)">
+    <path d="M0,140 Q40,80 80,140 Q120,200 160,140" stroke="#b45309" stroke-width="3" fill="none" opacity=".4"/>
+    <ellipse class="aw-gold" cx="15" cy="115" rx="14" ry="6" transform="rotate(40 15 115)"/>
+    <ellipse class="aw-gold" cx="35" cy="95" rx="14" ry="6" transform="rotate(25 35 95)"/>
+    <ellipse class="aw-gold" cx="55" cy="85" rx="14" ry="6" transform="rotate(10 55 85)"/>
+    <ellipse class="aw-gold" cx="80" cy="80" rx="14" ry="6" transform="rotate(-5 80 80)"/>
+    <ellipse class="aw-gold" cx="105" cy="85" rx="14" ry="6" transform="rotate(-20 105 85)"/>
+    <ellipse class="aw-gold" cx="125" cy="95" rx="14" ry="6" transform="rotate(-35 125 95)"/>
+    <ellipse class="aw-gold" cx="145" cy="115" rx="14" ry="6" transform="rotate(-50 145 115)"/>
+  </g>
+  <!-- Large soft circle (medallion feel) -->
+  <circle class="aw-gold-soft" cx="421" cy="297" r="280"/>
+  <circle class="aw-gold-soft" cx="421" cy="297" r="220" fill="none" stroke="#eab308" stroke-width="2" opacity=".3"/>
+  <!-- Corner stars -->
+  <g fill="#ca8a04" opacity=".4">
+    <polygon points="50,40 56,55 72,55 60,64 64,80 50,71 36,80 40,64 28,55 44,55"/>
+    <polygon points="792,40 798,55 814,55 802,64 806,80 792,71 778,80 782,64 770,55 786,55"/>
+    <polygon points="50,535 56,550 72,550 60,559 64,575 50,566 36,575 40,559 28,550 44,550"/>
+    <polygon points="792,535 798,550 814,550 802,559 806,575 792,566 778,575 782,559 770,550 786,550"/>
+  </g>
+  <!-- Subtle bottom ribbon -->
+  <path class="aw-burgundy" d="M340,495 L502,495 L490,525 L352,525 Z"/>
+</svg>

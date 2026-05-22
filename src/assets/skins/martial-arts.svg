@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 842 595">
+  <defs>
+    <style>
+      .ma-bg { fill: #fdfaf6; }
+      .ma-red { fill: #b91c1c; opacity: .12; }
+      .ma-red-strong { fill: #dc2626; opacity: .25; }
+      .ma-ink { fill: #18181b; opacity: .1; }
+      .ma-gold { fill: #ca8a04; opacity: .5; }
+    </style>
+  </defs>
+  <rect class="ma-bg" width="842" height="595"/>
+  <!-- Large rising-sun circle, top-right -->
+  <circle class="ma-red" cx="780" cy="120" r="220"/>
+  <circle class="ma-red-strong" cx="780" cy="120" r="120"/>
+  <circle class="ma-bg" cx="780" cy="120" r="80"/>
+  <!-- Geometric corner stamps (chop-stamp inspired) -->
+  <rect class="ma-red-strong" x="60" y="60" width="68" height="68"/>
+  <rect class="ma-bg" x="76" y="76" width="36" height="36"/>
+  <rect class="ma-red-strong" x="86" y="86" width="16" height="16"/>
+  <!-- Bottom-left diagonal stripes -->
+  <polygon class="ma-ink" points="0,595 0,490 200,595"/>
+  <polygon class="ma-ink" points="0,540 0,520 80,595 60,595"/>
+  <!-- Gold accent line -->
+  <rect class="ma-gold" x="0" y="296" width="842" height="2"/>
+  <!-- Small black dots (mon family-crest feel) -->
+  <circle class="ma-ink" cx="170" cy="500" r="6"/>
+  <circle class="ma-ink" cx="195" cy="520" r="4"/>
+  <circle class="ma-ink" cx="215" cy="498" r="5"/>
+</svg>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 842 595">
+  <defs>
+    <style>
+      .tu-bg { fill: #fdfcf7; }
+      .tu-navy { fill: #1e3a8a; opacity: .1; }
+      .tu-navy-strong { fill: #1d4ed8; opacity: .2; }
+      .tu-gold { fill: #d97706; opacity: .55; }
+      .tu-soft { fill: #1e3a8a; opacity: .05; }
+    </style>
+  </defs>
+  <rect class="tu-bg" width="842" height="595"/>
+  <!-- Open book silhouette, top-left -->
+  <path class="tu-navy" d="M30,90 L160,70 L160,180 L30,200 Z"/>
+  <path class="tu-navy" d="M160,70 L290,90 L290,200 L160,180 Z"/>
+  <path class="tu-navy-strong" d="M158,68 L162,68 L162,182 L158,182 Z"/>
+  <!-- Book pages indicator -->
+  <line x1="55" y1="115" x2="135" y2="105" stroke="#1d4ed8" stroke-width="2" opacity=".15"/>
+  <line x1="55" y1="135" x2="135" y2="125" stroke="#1d4ed8" stroke-width="2" opacity=".15"/>
+  <line x1="185" y1="105" x2="265" y2="115" stroke="#1d4ed8" stroke-width="2" opacity=".15"/>
+  <line x1="185" y1="125" x2="265" y2="135" stroke="#1d4ed8" stroke-width="2" opacity=".15"/>
+  <!-- Graduation cap, bottom-right -->
+  <polygon class="tu-navy" points="650,450 780,420 780,460 650,490"/>
+  <polygon class="tu-navy-strong" points="650,450 780,420 780,432 650,462"/>
+  <rect class="tu-navy" x="690" y="460" width="50" height="30"/>
+  <!-- Tassel -->
+  <line x1="715" y1="450" x2="715" y2="510" stroke="#d97706" stroke-width="3" opacity=".55"/>
+  <circle class="tu-gold" cx="715" cy="515" r="6"/>
+  <!-- Dot grid (subtle academic pattern) -->
+  <g fill="#1e3a8a" opacity=".08">
+    <circle cx="420" cy="80" r="3"/>
+    <circle cx="460" cy="80" r="3"/>
+    <circle cx="500" cy="80" r="3"/>
+    <circle cx="540" cy="80" r="3"/>
+    <circle cx="420" cy="510" r="3"/>
+    <circle cx="380" cy="510" r="3"/>
+    <circle cx="340" cy="510" r="3"/>
+    <circle cx="300" cy="510" r="3"/>
+  </g>
+  <!-- Gold accent line -->
+  <rect class="tu-gold" x="0" y="296" width="842" height="1"/>
+</svg>
