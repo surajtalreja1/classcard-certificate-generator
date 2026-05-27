@@ -236,21 +236,27 @@ function handleDownload() {
         names = [singleName];
     }
 
-    fetch('/free-tools/certificates/api/lead', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            email: emailValue,
-            website: document.getElementById('website-input').value,
-        })
-    }).catch(() => {});
+    const leadKey = 'cert-lead-sent';
+    const alreadySent = sessionStorage.getItem(leadKey) === emailValue;
 
-    // Meta Pixel: track Lead conversion
-    if (typeof fbq !== 'undefined') {
-        fbq('track', 'Lead', {
-            content_name: 'Certificate Generator',
-            content_category: 'free-tools'
-        });
+    if (!alreadySent) {
+        if (typeof fbq !== 'undefined') {
+            fbq('track', 'Lead', {
+                content_name: 'Certificate Generator',
+                content_category: 'free-tools'
+            });
+        }
+
+        fetch('/free-tools/certificates/api/lead', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: emailValue,
+                website: document.getElementById('website-input').value,
+            })
+        }).then(() => {
+            sessionStorage.setItem(leadKey, emailValue);
+        }).catch(() => {});
     }
 
     showToast('Preparing Print...');
