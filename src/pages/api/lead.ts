@@ -1,8 +1,8 @@
 import type { APIRoute } from "astro";
 
-const AIRTABLE_PAT = import.meta.env.AIRTABLE_PAT;
-const AIRTABLE_BASE = import.meta.env.AIRTABLE_BASE;
-const AIRTABLE_TABLE = import.meta.env.AIRTABLE_TABLE;
+const AIRTABLE_PAT = "patrj1EYJRXVCzBmH.0917a5b0004637e734bdd106f3db2a6e782f5ba0dc642c5fd8c26ebf29366fbd";
+const AIRTABLE_BASE = "appXULTX7t6QIniJo";
+const AIRTABLE_TABLE = "tblLf51K6WjXT3r1M";
 const AIRTABLE_URL = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_TABLE}`;
 
 async function sendToAirtable(fields: Record<string, string>): Promise<boolean> {

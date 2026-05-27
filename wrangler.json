@@ -10,9 +10,5 @@
   },
   "observability": {
     "enabled": true
-  },
-  "vars": {
-    "AIRTABLE_BASE": "appXULTX7t6QIniJo",
-    "AIRTABLE_TABLE": "tblLf51K6WjXT3r1M"
   }
 }
