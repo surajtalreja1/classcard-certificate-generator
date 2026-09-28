@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 595 842">
+  <defs>
+    <style>
+      .gy-bg { fill: #fcfaff; }
+      .gy-violet { fill: #7c3aed; opacity: .1; }
+      .gy-violet-strong { fill: #6d28d9; opacity: .2; }
+      .gy-pink { fill: #ec4899; opacity: .12; }
+      .gy-gold { fill: #eab308; opacity: .55; }
+    </style>
+  </defs>
+  <rect class="gy-bg" width="595" height="842"/>
+  <!-- Large flowing ribbon across the top -->
+  <path class="gy-violet" d="M-40,150 Q100,30 240,130 Q380,230 520,90 Q580,40 640,100 L640,160 Q580,100 520,150 Q380,290 240,190 Q100,90 -40,210 Z"/>
+  <path class="gy-pink" d="M-40,110 Q100,-10 240,90 Q380,190 520,50 L520,80 Q380,220 240,120 Q100,20 -40,140 Z"/>
+  <!-- Bottom ribbon swoosh -->
+  <path class="gy-violet-strong" d="M-40,745 Q140,800 300,740 Q460,680 640,735 L640,780 Q460,725 300,785 Q140,845 -40,790 Z"/>
+  <!-- Rhythmic gymnastics ball, lower-right -->
+  <circle class="gy-violet" cx="505" cy="640" r="105"/>
+  <circle class="gy-pink" cx="505" cy="640" r="70"/>
+  <!-- Smaller gymnastics balls, lower-left -->
+  <circle class="gy-violet-strong" cx="95" cy="665" r="36"/>
+  <circle class="gy-pink" cx="50" cy="615" r="20"/>
+  <!-- Gold star/sparkle highlights -->
+  <g class="gy-gold">
+    <polygon transform="translate(80 250)" points="0,0 5,13 18,13 8,21 11,34 0,26 -11,34 -8,21 -18,13 -5,13"/>
+    <polygon transform="translate(530 470)" points="0,0 3,9 12,9 5,14 7,22 0,17 -7,22 -5,14 -12,9 -3,9"/>
+    <circle cx="150" cy="60" r="6"/>
+    <circle cx="420" cy="770" r="5"/>
+  </g>
+</svg>

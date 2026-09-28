@@ -44,13 +44,67 @@ function setBadgeColor(color) {
 }
 
 let customBgDataUrl = '';
+let currentSkin = 'plain';
+let currentOrientation = 'landscape';
+
+// Returns the artwork URL for a skin in the given orientation. Skins without a
+// portrait variant fall back to their landscape art. Also accepts the older
+// flat SKINS map ({ name: url }) in case it is ever loaded.
+function getSkinUrl(skinName, orientation) {
+    if (typeof SKINS === 'undefined') return '';
+    const set = SKINS[orientation];
+    if (set && set[skinName]) return set[skinName];
+    if (SKINS.landscape && SKINS.landscape[skinName]) return SKINS.landscape[skinName];
+    return typeof SKINS[skinName] === 'string' ? SKINS[skinName] : '';
+}
+
+const UPLOAD_HINTS = {
+    landscape: 'Landscape image recommended (1123×794px or larger). Image will fill the certificate canvas.',
+    portrait: 'Portrait image recommended (794×1123px or larger). Image will fill the certificate canvas.',
+};
+
+function applyPrintPageSize() {
+    let styleEl = document.getElementById('print-page-size');
+    if (!styleEl) {
+        styleEl = document.createElement('style');
+        styleEl.id = 'print-page-size';
+        document.head.appendChild(styleEl);
+    }
+    styleEl.textContent = `@media print { @page { size: A4 ${currentOrientation}; margin: 0; } }`;
+}
+
+function setOrientation(orientation) {
+    currentOrientation = orientation === 'portrait' ? 'portrait' : 'landscape';
+    const isPortrait = currentOrientation === 'portrait';
+
+    document.getElementById('certificate-preview').classList.toggle('orient-portrait', isPortrait);
+
+    // Swap the background picker thumbnails to the matching artwork
+    const skinGrid = document.getElementById('skin-grid');
+    if (skinGrid) skinGrid.classList.toggle('thumbs-portrait', isPortrait);
+    document.querySelectorAll('.card-radio-thumb[data-skin]').forEach(thumb => {
+        const url = getSkinUrl(thumb.dataset.skin, currentOrientation);
+        if (url) thumb.style.backgroundImage = `url("${url}")`;
+    });
+
+    const hint = document.getElementById('bg-upload-hint');
+    if (hint) hint.innerText = UPLOAD_HINTS[currentOrientation];
+
+    applyPrintPageSize();
+    setSkin(currentSkin);
+    scalePreview();
+}
 
 function setSkin(skinName) {
     const preview = document.getElementById('certificate-preview');
     const bgLayer = document.getElementById('preview-bg-layer');
     const customBgContainer = document.getElementById('custom-bg-container');
 
-    preview.className = 'cert-render-area';
+    currentSkin = skinName;
+    // Drop only the previous skin class so the orientation class survives
+    Array.from(preview.classList)
+        .filter(c => c.startsWith('skin-'))
+        .forEach(c => preview.classList.remove(c));
     bgLayer.src = '';
     bgLayer.style.display = 'none';
 
@@ -74,11 +128,14 @@ function setSkin(skinName) {
             // No image uploaded yet — show white canvas
             preview.style.backgroundColor = '#ffffff';
         }
-    } else if (typeof SKINS !== 'undefined' && SKINS[skinName]) {
-        bgLayer.src = SKINS[skinName];
-        bgLayer.style.display = 'block';
-        bgLayer.style.objectFit = 'fill';
-        preview.style.backgroundColor = 'transparent';
+    } else {
+        const url = getSkinUrl(skinName, currentOrientation);
+        if (url) {
+            bgLayer.src = url;
+            bgLayer.style.display = 'block';
+            bgLayer.style.objectFit = 'fill';
+            preview.style.backgroundColor = 'transparent';
+        }
     }
 }
 
@@ -421,7 +478,21 @@ function scalePreview() {
     const container = document.querySelector('.preview-container');
     if (!scaler || !container) return;
 
-    if (manualScale) { scaler.style.transform = `scale(${manualScale})`; return; }
+    // A scale transform does not shrink the layout box, so a tall (portrait)
+    // canvas would stay 1123px tall in the flex-centred pane and its top would
+    // be pushed out of view. Pull the bottom margin in so the layout height
+    // matches the visual height. Landscape keeps its existing positioning.
+    const fitLayoutToScale = (s) => {
+        const cert = document.querySelector('.cert-render-area');
+        const h = cert ? cert.offsetHeight : 794;
+        scaler.style.marginBottom = currentOrientation === 'portrait' ? `${h * (s - 1)}px` : '';
+    };
+
+    if (manualScale) {
+        scaler.style.transform = `scale(${manualScale})`;
+        fitLayoutToScale(manualScale);
+        return;
+    }
 
     const availableWidth = container.offsetWidth || window.innerWidth - 400;
     const availableHeight = container.offsetHeight || window.innerHeight - 100;
@@ -442,11 +513,13 @@ function scalePreview() {
         scaler.style.transformOrigin = 'top center';
         scaler.style.transform = `scale(${mobileScale})`;
         scaler.style.marginLeft = '';
+        scaler.style.marginBottom = '';
         container.style.height = (scaledHeight + 20) + 'px';
     } else {
         scaler.style.transformOrigin = '';
         scaler.style.marginLeft = '';
         scaler.style.transform = `scale(${scale})`;
+        fitLayoutToScale(scale);
         container.style.height = '';
     }
 }

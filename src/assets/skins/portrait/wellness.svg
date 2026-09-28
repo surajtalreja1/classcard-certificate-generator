@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 595 842">
+  <defs>
+    <style>
+      .we-bg { fill: #fafdf7; }
+      .we-sage { fill: #65a30d; opacity: .1; }
+      .we-sage-strong { fill: #4d7c0f; opacity: .18; }
+      .we-soft-green { fill: #84cc16; opacity: .2; }
+      .we-gold { fill: #eab308; opacity: .5; }
+    </style>
+  </defs>
+  <rect class="we-bg" width="595" height="842"/>
+  <!-- Lotus petals, top-left (stylized) -->
+  <ellipse class="we-sage" cx="100" cy="100" rx="35" ry="80" transform="rotate(-30 100 100)"/>
+  <ellipse class="we-sage" cx="100" cy="100" rx="35" ry="80" transform="rotate(30 100 100)"/>
+  <ellipse class="we-sage-strong" cx="100" cy="100" rx="35" ry="80"/>
+  <circle class="we-gold" cx="100" cy="100" r="14"/>
+  <!-- Leaf accent, top-right -->
+  <path class="we-soft-green" d="M490,80 Q570,40 550,140 Q490,180 470,150 Q450,120 490,80 Z"/>
+  <path d="M490,80 Q570,40 550,140" stroke="#4d7c0f" stroke-width="1.5" fill="none" opacity=".4"/>
+  <!-- Bottom organic curve (zen rolling hill) -->
+  <path class="we-sage" d="M0,842 L0,760 Q150,700 297,740 Q445,780 595,710 L595,842 Z"/>
+  <path class="we-sage-strong" d="M0,800 Q150,740 297,780 Q445,820 595,750 L595,755 Q445,825 297,785 Q150,745 0,805 Z"/>
+  <!-- Small lotus petals, bottom-right -->
+  <ellipse class="we-sage" cx="500" cy="680" rx="22" ry="50" transform="rotate(-30 500 680)"/>
+  <ellipse class="we-sage" cx="500" cy="680" rx="22" ry="50" transform="rotate(30 500 680)"/>
+  <circle class="we-gold" cx="500" cy="680" r="9"/>
+  <!-- Soft circles (breath / meditation feel) -->
+  <circle cx="90" cy="430" r="55" fill="none" stroke="#84cc16" stroke-width="1.5" opacity=".2"/>
+  <circle cx="505" cy="470" r="38" fill="none" stroke="#84cc16" stroke-width="1.5" opacity=".15"/>
+</svg>

@@ -640,9 +640,63 @@ body.theme-dark label.radio-label {
     color: white;
 }
 
+/* Orientation cards: a small page outline in the thumb area */
+.thumb-orient {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(24, 24, 27, 0.04);
+}
+
+.thumb-orient::before {
+    content: '';
+    display: block;
+    box-sizing: border-box;
+    border: 1.5px solid rgba(24, 24, 27, 0.55);
+    border-radius: 2px;
+    background: #ffffff;
+}
+
+.thumb-orient-landscape::before {
+    width: 36px;
+    height: 26px;
+}
+
+.thumb-orient-portrait::before {
+    width: 26px;
+    height: 36px;
+}
+
+.card-radio:has(:checked) .thumb-orient {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.card-radio:has(:checked) .thumb-orient::before {
+    border-color: white;
+    background: transparent;
+}
+
+/* Portrait artwork is tall, so show the whole page inside the thumb */
+.card-radio-grid.thumbs-portrait .card-radio-thumb[data-skin] {
+    background-size: contain;
+}
+
 body.theme-dark .card-radio-thumb {
     background-color: rgba(255, 255, 255, 0.04);
     border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.theme-dark .thumb-orient::before {
+    border-color: rgba(255, 255, 255, 0.6);
+    background: transparent;
+}
+
+body.theme-dark .card-radio:has(:checked) .thumb-orient {
+    background-color: rgba(24, 24, 27, 0.06);
+}
+
+body.theme-dark .card-radio:has(:checked) .thumb-orient::before {
+    border-color: rgba(24, 24, 27, 0.8);
 }
 
 body.theme-dark .thumb-plain {
@@ -1293,6 +1347,31 @@ body.theme-dark .theme-toggle-btn:hover {
     gap: 16px;
 }
 
+/* VERTICAL (PORTRAIT) ORIENTATION — A4 portrait at 96dpi */
+.cert-render-area.orient-portrait {
+    width: 794px;
+    height: 1123px;
+}
+
+/* Centre the content in the space above the contact footer */
+.cert-render-area.orient-portrait .cert-content {
+    margin-top: auto;
+    gap: 20px;
+}
+
+.cert-render-area.orient-portrait .cert-headline {
+    font-size: 46px;
+    line-height: 1.1;
+}
+
+.cert-render-area.orient-portrait .cert-sub {
+    max-width: 560px;
+}
+
+.cert-render-area.orient-portrait .signature-area {
+    margin-top: 32px;
+}
+
 .cert-tag {
     font-family: "Lato", sans-serif;
     font-weight: 500;
@@ -1419,6 +1498,8 @@ body.theme-dark .theme-toggle-btn:hover {
     gap: 6px;
     margin-top: auto;
     padding-bottom: 24px;
+    position: relative;
+    z-index: 5; /* Keep above the background artwork layer */
 }
 
 .cert-contact-info span:empty {
@@ -1459,6 +1540,8 @@ body.theme-dark .theme-toggle-btn:hover {
     color: #374151;
     display: none;
     padding-bottom: 12px;
+    position: relative;
+    z-index: 5; /* Keep above the background artwork layer */
 }
 
 @media print {
@@ -1560,6 +1643,9 @@ body.theme-dark .theme-toggle-btn:hover {
         padding-bottom: 100px;
         margin-top: var(--mobile-top-h, 142px);
         overflow: visible;
+        /* The scaled certificate keeps its full-size layout box, which would
+           otherwise widen the page on phones. The visible canvas fits. */
+        overflow-x: clip;
     }
 
     /* DE-STICKY FOOTER ON MOBILE */
@@ -1805,6 +1891,13 @@ body.printing > #batch-print-zone {
         height: 794px !important;
         display: flex !important; /* Ensure it stays a layout even in print */
     }
-    
+
+    .cert-render-area.orient-portrait {
+        width: 794px !important;
+        height: 1123px !important;
+    }
+
+    /* Default page size. app.js injects a later rule that switches this to
+       portrait when the Vertical orientation is selected. */
     @page { size: A4 landscape; margin: 0; }
 }

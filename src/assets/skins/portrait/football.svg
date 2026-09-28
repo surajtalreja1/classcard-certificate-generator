@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 595 842">
+  <defs>
+    <style>
+      .fb-bg { fill: #f8fbf6; }
+      .fb-green { fill: #16a34a; opacity: .1; }
+      .fb-green-strong { fill: #15803d; opacity: .2; }
+      .fb-grass { fill: #22c55e; opacity: .08; }
+      .fb-gold { fill: #eab308; opacity: .55; }
+    </style>
+  </defs>
+  <rect class="fb-bg" width="595" height="842"/>
+  <!-- Field stripe bands, running across the tall page -->
+  <rect class="fb-green" x="0" y="0" width="595" height="120"/>
+  <rect class="fb-grass" x="0" y="240" width="595" height="120"/>
+  <rect class="fb-green" x="0" y="480" width="595" height="120"/>
+  <rect class="fb-grass" x="0" y="720" width="595" height="122"/>
+  <!-- White background overlay to soften stripes (leaves center mostly clear) -->
+  <rect fill="#fdfdf9" opacity=".5" width="595" height="842"/>
+  <!-- Halfway line and center circle -->
+  <line x1="0" y1="421" x2="595" y2="421" stroke="#15803d" stroke-width="1.5" opacity=".1"/>
+  <circle cx="297" cy="421" r="180" fill="none" stroke="#15803d" stroke-width="1.5" opacity=".15"/>
+  <circle cx="297" cy="421" r="8" fill="#15803d" opacity=".25"/>
+  <!-- Top-left stylized soccer ball -->
+  <g transform="translate(95 105)" opacity=".3">
+    <circle r="55" fill="#f8fbf6"/>
+    <circle r="55" fill="none" stroke="#15803d" stroke-width="1.5"/>
+    <polygon points="0,-26 22,-13 22,13 0,26 -22,13 -22,-13" fill="#18181b" opacity=".25"/>
+    <line x1="0" y1="-26" x2="0" y2="-50" stroke="#15803d" stroke-width="1" opacity=".6"/>
+    <line x1="22" y1="-13" x2="44" y2="-26" stroke="#15803d" stroke-width="1" opacity=".6"/>
+    <line x1="22" y1="13" x2="44" y2="26" stroke="#15803d" stroke-width="1" opacity=".6"/>
+    <line x1="0" y1="26" x2="0" y2="50" stroke="#15803d" stroke-width="1" opacity=".6"/>
+    <line x1="-22" y1="13" x2="-44" y2="26" stroke="#15803d" stroke-width="1" opacity=".6"/>
+    <line x1="-22" y1="-13" x2="-44" y2="-26" stroke="#15803d" stroke-width="1" opacity=".6"/>
+  </g>
+  <!-- Bottom-right large ball -->
+  <g transform="translate(495 730)" opacity=".3">
+    <circle r="62" fill="#f8fbf6"/>
+    <circle r="62" fill="none" stroke="#15803d" stroke-width="2"/>
+    <polygon points="0,-30 26,-15 26,15 0,30 -26,15 -26,-15" fill="#18181b" opacity=".25"/>
+  </g>
+  <!-- Gold accent stars (winning) -->
+  <g class="fb-gold">
+    <polygon transform="translate(130 740)" points="0,0 4,10 15,10 6,16 9,27 0,20 -9,27 -6,16 -15,10 -4,10"/>
+    <polygon transform="translate(470 150)" points="0,0 3,9 12,9 5,14 7,22 0,17 -7,22 -5,14 -12,9 -3,9"/>
+    <polygon transform="translate(297 60)" points="0,0 3,9 12,9 5,14 7,22 0,17 -7,22 -5,14 -12,9 -3,9"/>
+  </g>
+  <!-- Goal post lines (corners) -->
+  <line x1="0" y1="40" x2="60" y2="40" stroke="#15803d" stroke-width="2" opacity=".3"/>
+  <line x1="60" y1="40" x2="60" y2="0" stroke="#15803d" stroke-width="2" opacity=".3"/>
+  <line x1="595" y1="802" x2="535" y2="802" stroke="#15803d" stroke-width="2" opacity=".3"/>
+  <line x1="535" y1="802" x2="535" y2="842" stroke="#15803d" stroke-width="2" opacity=".3"/>
+</svg>
