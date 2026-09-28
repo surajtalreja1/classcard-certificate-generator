@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 595 842">
+  <defs>
+    <style>
+      .dn-bg { fill: #fff8f6; }
+      .dn-coral { fill: #f43f5e; opacity: .1; }
+      .dn-coral-strong { fill: #e11d48; opacity: .18; }
+      .dn-warm { fill: #fb923c; opacity: .14; }
+      .dn-gold { fill: #eab308; opacity: .55; }
+    </style>
+  </defs>
+  <rect class="dn-bg" width="595" height="842"/>
+  <!-- Large spiraling motion curves (top-right) -->
+  <path class="dn-coral" d="M640,0 L420,0 Q455,45 505,60 Q575,80 585,140 Q595,200 540,225 Q490,250 510,295 Q530,340 640,350 Z"/>
+  <path class="dn-coral-strong" d="M640,60 Q565,68 550,112 Q535,156 595,178 L640,185 Z"/>
+  <!-- Bottom-left dance motion swoop -->
+  <path class="dn-coral" d="M0,842 L0,650 Q60,690 100,750 Q140,810 220,842 Z"/>
+  <path class="dn-warm" d="M0,842 L0,600 Q50,645 90,710 Q130,780 200,842 Z"/>
+  <!-- Curve overlay (movement trail) -->
+  <path d="M30,760 Q130,680 230,725 Q330,770 430,700 Q510,645 580,680" stroke="#e11d48" stroke-width="2" fill="none" opacity=".25"/>
+  <!-- Music note dots scattered -->
+  <g class="dn-gold">
+    <circle cx="110" cy="150" r="7"/>
+    <circle cx="150" cy="125" r="4"/>
+    <line x1="114" y1="150" x2="114" y2="90" stroke="#eab308" stroke-width="2" opacity="1"/>
+    <circle cx="470" cy="770" r="6"/>
+    <circle cx="515" cy="748" r="3.5"/>
+    <line x1="473" y1="770" x2="473" y2="720" stroke="#eab308" stroke-width="2" opacity="1"/>
+  </g>
+  <!-- Floating sparkles -->
+  <g class="dn-gold">
+    <polygon transform="translate(210 50)" points="0,0 3,9 12,9 5,14 7,22 0,17 -7,22 -5,14 -12,9 -3,9"/>
+    <polygon transform="translate(555 470)" points="0,0 3,9 12,9 5,14 7,22 0,17 -7,22 -5,14 -12,9 -3,9"/>
+  </g>
+  <!-- Soft circles (rhythm beats) -->
+  <circle cx="300" cy="70" r="26" fill="none" stroke="#f43f5e" stroke-width="1.5" opacity=".2"/>
+  <circle cx="300" cy="70" r="42" fill="none" stroke="#f43f5e" stroke-width="1" opacity=".15"/>
+</svg>

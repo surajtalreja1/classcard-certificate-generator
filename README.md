@@ -9,7 +9,8 @@ The project is a lightweight, frontend-only web application designed to help use
 * **Live Preview & Sidebar Controls:** The application features a two-pane layout. The left sidebar contains all the input controls, while the right pane shows a live, dynamically updated preview of the A4 certificate.
 * **Single & Batch Generation:** Users can generate a single certificate for one recipient, or use the "Batch" mode to paste a list of names. In Batch mode, the app automatically generates a separate certificate for each name.
 * **Theming & Customization:**
-  * **Skins:** Users can select different background themes (Plain, Gymnastics, Dance, Football) which are stored as SVG assets.
+  * **Orientation:** Certificates can be Horizontal (A4 landscape, the default) or Vertical (A4 portrait). The preview, background artwork and printed page size all follow the selected orientation.
+  * **Skins:** Users can select different background themes (Plain, Gymnastics, Dance, Football, Swim, Academic, Wellness, or an uploaded image) which are stored as SVG assets. Each illustrated skin has a landscape design in `skins/` and a portrait design in `skins/portrait/`.
   * **Custom Text:** Fields for Award Title, Recipient, Narrative, Signatures, and Dates.
   * **Rank Seals:** Option to add Gold, Silver, or Bronze seals with customizable labels (e.g., 1st, 2nd, 3rd vs. Gold, Silver, Bronze).
   * **Logos:** Users can upload their own academy/school logo to appear alongside the default Classcard branding.

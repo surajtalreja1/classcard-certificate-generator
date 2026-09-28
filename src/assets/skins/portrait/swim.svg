@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 595 842">
+  <defs>
+    <style>
+      .sw-bg { fill: #f6f8fb; }
+      .sw-deep { fill: #0e7490; opacity: .1; }
+      .sw-mid { fill: #0ea5e9; opacity: .15; }
+      .sw-light { fill: #38bdf8; opacity: .25; }
+      .sw-accent { fill: #facc15; opacity: .6; }
+    </style>
+  </defs>
+  <rect class="sw-bg" width="595" height="842"/>
+  <!-- Top wave band -->
+  <path class="sw-deep" d="M0,0 L595,0 L595,60 C495,20 395,90 297,55 C198,20 99,80 0,40 Z"/>
+  <path class="sw-mid" d="M0,40 C99,80 198,20 297,55 C395,90 495,20 595,60 L595,110 C495,70 395,140 297,105 C198,70 99,130 0,90 Z"/>
+  <!-- Bottom wave band -->
+  <path class="sw-deep" d="M0,842 L0,782 C99,822 198,762 297,797 C395,832 495,762 595,802 L595,842 Z"/>
+  <path class="sw-mid" d="M0,782 C99,822 198,762 297,797 C395,832 495,762 595,802 L595,752 C495,712 395,782 297,747 C198,712 99,772 0,732 Z"/>
+  <!-- Bubble accents (water droplets) -->
+  <circle class="sw-light" cx="110" cy="640" r="42"/>
+  <circle class="sw-light" cx="55" cy="590" r="22"/>
+  <circle class="sw-light" cx="495" cy="235" r="50"/>
+  <circle class="sw-light" cx="550" cy="295" r="26"/>
+  <!-- Sun spark -->
+  <circle class="sw-accent" cx="525" cy="160" r="18"/>
+</svg>
