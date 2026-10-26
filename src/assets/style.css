@@ -194,7 +194,7 @@ body.theme-dark .sidebar h1 {
     padding: 12px 16px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 20px;
 }
 
 body.theme-dark .section-header {
