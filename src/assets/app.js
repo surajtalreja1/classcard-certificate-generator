@@ -653,15 +653,18 @@ function scalePreview() {
     const container = document.querySelector('.preview-container');
     if (!scaler || !container) return;
 
-    // A scale transform does not shrink the layout box, so a tall (portrait)
-    // canvas would stay 1123px tall in the flex-centred pane and its top would
-    // be pushed out of view. Pull the bottom margin in so the layout height
-    // matches the visual height. Landscape keeps its existing positioning.
+    // A scale transform does not shrink the layout box, so the canvas would
+    // keep its full 794/1123px height in the pane and push the layout toolbar
+    // and the canvas out of place. Pull the bottom margin in so the layout
+    // height matches the visual height.
     const fitLayoutToScale = (s) => {
         const cert = document.querySelector('.cert-render-area');
         const h = cert ? cert.offsetHeight : 794;
-        scaler.style.marginBottom = currentOrientation === 'portrait' ? `${h * (s - 1)}px` : '';
+        scaler.style.marginBottom = `${h * (s - 1)}px`;
     };
+    // The layout toolbar sits above the canvas, so leave room for it.
+    const toolbar = document.getElementById('layout-toolbar');
+    const toolbarSpace = toolbar ? toolbar.offsetHeight + 16 : 0;
 
     if (manualScale) {
         scaler.style.transform = `scale(${manualScale})`;
@@ -679,7 +682,11 @@ function scalePreview() {
     const isMobile = window.matchMedia('(max-width: 850px)').matches;
     const pad = isMobile ? 0 : 40;
     const scaleX = (availableWidth - pad) / targetWidth;
-    const scaleY = (availableHeight - pad) / targetHeight;
+    // Fit the height inside the pane's padding so the toolbar and canvas
+    // both stay fully visible.
+    const paneStyle = getComputedStyle(container);
+    const innerHeight = availableHeight - parseFloat(paneStyle.paddingTop) - parseFloat(paneStyle.paddingBottom);
+    const scaleY = (innerHeight - toolbarSpace) / targetHeight;
     const scale = isMobile ? scaleX : Math.min(scaleX, scaleY, 0.9);
     scaler.style.zoom = '';
     if (isMobile) {
@@ -690,8 +697,6 @@ function scalePreview() {
         scaler.style.transform = `scale(${mobileScale})`;
         scaler.style.marginLeft = '';
         scaler.style.marginBottom = '';
-        const toolbar = document.getElementById('layout-toolbar');
-        const toolbarSpace = toolbar ? toolbar.offsetHeight + 10 : 0;
         container.style.height = (scaledHeight + 20 + toolbarSpace) + 'px';
         setUiScale(mobileScale);
     } else {
@@ -922,9 +927,15 @@ function updateLayoutControls() {
     const reset = document.getElementById('layout-reset');
     if (toggle) {
         toggle.setAttribute('aria-pressed', layoutEditing ? 'true' : 'false');
+        // Active state uses the same black button as Print Certificate.
+        toggle.classList.toggle('btn-primary', layoutEditing);
+        toggle.classList.toggle('btn-outline', !layoutEditing);
         document.getElementById('layout-toggle-text').textContent = layoutEditing ? 'Done' : 'Adjust layout';
     }
-    if (reset) reset.disabled = Object.keys(offsetsForOrientation()).length === 0;
+    if (reset) {
+        reset.hidden = !layoutEditing;
+        reset.disabled = Object.keys(offsetsForOrientation()).length === 0;
+    }
 }
 
 function refreshMoveFrame() {

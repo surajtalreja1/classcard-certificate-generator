@@ -103,15 +103,33 @@ const stubSideEffects = async (page: Page) => {
 test("adjust layout toggles edit mode", async ({ page }) => {
   await openStudio(page);
   const toggle = page.locator("#layout-toggle");
+  const reset = page.locator("#layout-reset");
   await expect(toggle).toHaveAttribute("aria-pressed", "false");
-  await expect(page.locator("#layout-reset")).toBeDisabled();
+  await expect(toggle).not.toHaveClass(/btn-primary/);
+  // Reset only appears once layout editing is on.
+  await expect(reset).toBeHidden();
   await toggle.click();
   await expect(toggle).toHaveAttribute("aria-pressed", "true");
+  await expect(toggle).toHaveClass(/btn-primary/);
+  await expect(reset).toBeVisible();
+  await expect(reset).toBeDisabled();
   await expect(page.locator("body")).toHaveClass(/layout-editing/);
   await expect(page.locator("#preview-recipient")).toHaveAttribute("tabindex", "0");
   await toggle.click();
   await expect(page.locator("body")).not.toHaveClass(/layout-editing/);
   await expect(page.locator("#preview-recipient")).not.toHaveAttribute("tabindex", "0");
+  await expect(reset).toBeHidden();
+});
+
+test("the layout toolbar sits centred above the certificate", async ({ page }) => {
+  await openStudio(page);
+  for (const orientation of ["Horizontal", "Vertical"]) {
+    await page.click(`label[aria-label="${orientation}"]`);
+    const toolbar = await boxOf(page, "#layout-toolbar");
+    const cert = await boxOf(page, "#certificate-preview");
+    expect(toolbar.y + toolbar.height).toBeLessThanOrEqual(cert.y);
+    expect(toolbar.x + toolbar.width / 2).toBeCloseTo(cert.x + cert.width / 2, 0);
+  }
 });
 
 test("elements only move while adjust layout is on", async ({ page }) => {
