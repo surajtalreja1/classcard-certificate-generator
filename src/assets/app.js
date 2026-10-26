@@ -24,7 +24,30 @@ function updatePreview() {
     document.getElementById('preview-website').innerText = website;
     document.getElementById('preview-email').innerText = email;
     document.getElementById('preview-phone').innerText = phone;
+    updateBlankElements();
     refreshLayoutUi();
+}
+
+// Hides certificate elements whose input is empty so they leave no gap.
+function setBlank(el, blank) {
+    if (el) el.classList.toggle('is-blank', blank);
+}
+
+function updateBlankElements() {
+    const isEmpty = (id) => !document.getElementById(id).value.trim();
+    setBlank(document.getElementById('preview-tag'), isEmpty('tag-input'));
+    setBlank(document.getElementById('preview-title'), isEmpty('title-input'));
+    setBlank(document.getElementById('preview-recipient'), isEmpty('recipient-input'));
+    setBlank(document.getElementById('preview-sub'), isEmpty('sub-input'));
+    setBlank(document.getElementById('preview-coach'), isEmpty('coach-input'));
+    setBlank(document.getElementById('preview-coach-label'), isEmpty('coach-label-input'));
+    setBlank(document.getElementById('preview-date'), isEmpty('date-input'));
+
+    const sigDetailsBlank = isEmpty('coach-input') && isEmpty('coach-label-input') && isEmpty('date-input');
+    const hasSignature = document.getElementById('preview-signature').parentElement.classList.contains('has-image');
+    setBlank(document.querySelector('#certificate-preview .sig-details'), sigDetailsBlank);
+    setBlank(document.querySelector('#certificate-preview .signature-area'), sigDetailsBlank && !hasSignature);
+    setBlank(document.querySelector('#certificate-preview .cert-org-info'), isEmpty('business-input') && isEmpty('location-input'));
 }
 
 const BADGE_COLORS = {
@@ -454,7 +477,7 @@ function handleSignatureUpload(event) {
         statusText.innerText = file.name;
         uploadBtn.style.display = 'none';
         previewRow.style.display = 'flex';
-        refreshLayoutUi();
+        updatePreview();
     };
     reader.readAsDataURL(file);
 }
@@ -471,7 +494,7 @@ function removeSignature() {
     uploadBtn.style.display = '';
     previewRow.style.display = 'none';
     if (fileInput) fileInput.value = '';
-    refreshLayoutUi();
+    updatePreview();
 }
 
 let toastTimer = null;
@@ -505,7 +528,9 @@ function buildPrintCertificate(name) {
         n.removeAttribute('aria-label');
         n.classList.remove('is-dragging', 'is-empty');
     });
-    cert.querySelector('.cert-recipient').textContent = name;
+    const recipient = cert.querySelector('.cert-recipient');
+    recipient.textContent = name;
+    recipient.classList.toggle('is-blank', !name.trim());
     cert.style.transform = 'none';
     cert.style.margin = '0 auto';
     cert.style.pageBreakAfter = 'always';
@@ -527,7 +552,7 @@ function handleDownload() {
 
     const isBatch = document.getElementById('batch-names-container').style.display !== 'none';
     const namesText = document.getElementById('batch-names-input').value;
-    const singleName = document.getElementById('recipient-input').value || 'Athlete';
+    const singleName = document.getElementById('recipient-input').value.trim();
 
     let names = [];
     if (isBatch) {
@@ -766,6 +791,8 @@ function setSeal(type) {
         seal.classList.add('active', `seal-${type}`);
         updateSealLabel();
     }
+    const labelField = document.getElementById('seal-label-field');
+    if (labelField) labelField.hidden = type === 'none';
     refreshLayoutUi();
 }
 
