@@ -24,6 +24,7 @@ function updatePreview() {
     document.getElementById('preview-website').innerText = website;
     document.getElementById('preview-email').innerText = email;
     document.getElementById('preview-phone').innerText = phone;
+    refreshLayoutUi();
 }
 
 const BADGE_COLORS = {
@@ -92,13 +93,13 @@ function setOrientation(orientation) {
 
     applyPrintPageSize();
     setSkin(currentSkin);
+    applyLayoutOffsets();
     scalePreview();
 }
 
 function setSkin(skinName) {
     const preview = document.getElementById('certificate-preview');
     const bgLayer = document.getElementById('preview-bg-layer');
-    const customBgContainer = document.getElementById('custom-bg-container');
 
     currentSkin = skinName;
     // Drop only the previous skin class so the orientation class survives
@@ -108,19 +109,15 @@ function setSkin(skinName) {
     bgLayer.src = '';
     bgLayer.style.display = 'none';
 
-    // Toggle the upload UI only when the Custom card is selected
-    if (customBgContainer) {
-        customBgContainer.style.display = skinName === 'custom' ? 'block' : 'none';
-    }
-
     preview.classList.add(`skin-${skinName}`);
     if (skinName === 'plain') {
         bgLayer.style.display = 'none';
         preview.style.backgroundColor = '#ffffff';
         bgLayer.style.objectFit = 'fill';
     } else if (skinName === 'custom') {
-        if (customBgDataUrl) {
-            bgLayer.src = customBgDataUrl;
+        const customUrl = activeCustomBackground();
+        if (customUrl) {
+            bgLayer.src = customUrl;
             bgLayer.style.display = 'block';
             bgLayer.style.objectFit = 'cover';
             preview.style.backgroundColor = 'transparent';
@@ -139,45 +136,268 @@ function setSkin(skinName) {
     }
 }
 
-function handleBackgroundUpload(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const bgLayer = document.getElementById('preview-bg-layer');
-    const preview = document.getElementById('certificate-preview');
-    const uploadBtn = document.getElementById('bg-upload-btn');
-    const previewRow = document.getElementById('bg-preview-row');
-    const thumb = document.getElementById('bg-preview-thumb');
-    const statusText = document.getElementById('bg-file-status');
+// --- Background upload modal ---
+// Picking the Upload card opens this modal. The chosen image previews live on
+// the certificate behind the dimmed backdrop; Cancel puts everything back the
+// way it was, "Use background" commits it.
 
+let customBgMeta = null;          // { name, width, height } of the committed image
+let bgModalSnapshot = null;       // state to restore on Cancel
+let bgModalPending = '';          // image shown while the modal is open
+let bgModalPendingMeta = null;
+let bgModalReturnFocus = null;
+let bgModalPointerOnBackdrop = false;
+
+function isBgModalOpen() {
+    const overlay = document.getElementById('bg-modal-overlay');
+    return !!overlay && overlay.classList.contains('open');
+}
+
+// The custom image the certificate should show right now.
+function activeCustomBackground() {
+    return isBgModalOpen() ? bgModalPending : customBgDataUrl;
+}
+
+function checkRadio(name, value) {
+    const input = document.querySelector(`input[name="${name}"][value="${value}"]`);
+    if (input) input.checked = true;
+}
+
+function openBgModal() {
+    if (isBgModalOpen()) return;
+    bgModalSnapshot = {
+        skin: currentSkin,
+        dataUrl: customBgDataUrl,
+        meta: customBgMeta,
+        orientation: currentOrientation,
+    };
+    bgModalPending = customBgDataUrl;
+    bgModalPendingMeta = customBgMeta;
+    bgModalReturnFocus = document.querySelector('input[name="skin"][value="custom"]');
+
+    document.getElementById('bg-modal-overlay').classList.add('open');
+    document.body.classList.add('modal-open');
+    checkRadio('skin', 'custom');
+    setSkin('custom');
+    renderBgModal();
+    setBgModalError('');
+    requestAnimationFrame(() => {
+        const target = bgModalPending ? document.getElementById('bg-apply-btn') : document.getElementById('bg-dropzone');
+        if (target) target.focus();
+    });
+}
+
+function hideBgModal() {
+    document.getElementById('bg-modal-overlay').classList.remove('open');
+    document.body.classList.remove('modal-open');
+    const dropzone = document.getElementById('bg-dropzone');
+    if (dropzone) dropzone.classList.remove('dragging');
+    const fileInput = document.getElementById('bg-upload');
+    if (fileInput) fileInput.value = '';
+    bgModalPending = '';
+    bgModalPendingMeta = null;
+    bgModalSnapshot = null;
+    if (bgModalReturnFocus) bgModalReturnFocus.focus({ preventScroll: true });
+    bgModalReturnFocus = null;
+}
+
+// apply = true commits the pending image; false (Cancel, Esc, backdrop, ×)
+// restores the background, skin and orientation from before the modal opened.
+function closeBgModal(apply) {
+    if (!isBgModalOpen()) return;
+    const snap = bgModalSnapshot;
+    const pending = bgModalPending;
+    const pendingMeta = bgModalPendingMeta;
+
+    if (apply && pending) {
+        customBgDataUrl = pending;
+        customBgMeta = pendingMeta;
+        hideBgModal();
+        checkRadio('skin', 'custom');
+        setSkin('custom');
+        updateUploadCard();
+        showToast('Background added. Use “Adjust layout” to line things up.', 3500);
+        return;
+    }
+
+    customBgDataUrl = snap.dataUrl;
+    customBgMeta = snap.meta;
+    hideBgModal();
+    if (currentOrientation !== snap.orientation) {
+        checkRadio('orientation', snap.orientation);
+        setOrientation(snap.orientation);
+    }
+    checkRadio('skin', snap.skin);
+    setSkin(snap.skin);
+    updateUploadCard();
+}
+
+// Removes the custom image entirely and falls back to the previous skin.
+function removeBackgroundUpload() {
+    const snap = bgModalSnapshot;
+    const fallback = snap && snap.skin !== 'custom' ? snap.skin : 'plain';
+    customBgDataUrl = '';
+    customBgMeta = null;
+    if (isBgModalOpen()) hideBgModal();
+    checkRadio('skin', fallback);
+    setSkin(fallback);
+    updateUploadCard();
+}
+
+function handleBackgroundUpload(event) {
+    loadBackgroundFile(event.target.files && event.target.files[0]);
+}
+
+function loadBackgroundFile(file) {
+    if (!file) return;
+    if (!/^image\//.test(file.type)) {
+        setBgModalError('Please choose an image file (PNG, JPG, SVG or WebP).');
+        return;
+    }
+    setBgModalError('');
     const reader = new FileReader();
     reader.onload = function (e) {
-        customBgDataUrl = e.target.result;
-        bgLayer.src = customBgDataUrl;
-        bgLayer.style.display = 'block';
-        bgLayer.style.objectFit = 'cover';
-        preview.style.backgroundColor = 'transparent';
-        thumb.src = customBgDataUrl;
-        statusText.innerText = file.name;
-        uploadBtn.style.display = 'none';
-        previewRow.style.display = 'flex';
+        const url = e.target.result;
+        const img = new Image();
+        img.onload = function () {
+            setPendingBackground(url, { name: file.name, width: img.naturalWidth, height: img.naturalHeight });
+        };
+        img.onerror = function () {
+            setBgModalError('That image could not be read. Try a PNG or JPG.');
+        };
+        img.src = url;
     };
     reader.readAsDataURL(file);
 }
 
-function removeBackgroundUpload() {
-    const bgLayer = document.getElementById('preview-bg-layer');
-    const preview = document.getElementById('certificate-preview');
-    const uploadBtn = document.getElementById('bg-upload-btn');
-    const previewRow = document.getElementById('bg-preview-row');
-    const fileInput = document.getElementById('bg-upload');
+function setPendingBackground(url, meta) {
+    // The user may have cancelled while the file was still loading.
+    if (!isBgModalOpen()) return;
+    bgModalPending = url;
+    bgModalPendingMeta = meta;
+    setSkin('custom');
+    renderBgModal();
+}
 
-    customBgDataUrl = '';
-    bgLayer.src = '';
-    bgLayer.style.display = 'none';
-    preview.style.backgroundColor = '#ffffff';
-    uploadBtn.style.display = '';
-    previewRow.style.display = 'none';
-    if (fileInput) fileInput.value = '';
+function setBgModalError(message) {
+    const el = document.getElementById('bg-modal-error');
+    if (!el) return;
+    el.textContent = message;
+    el.hidden = !message;
+}
+
+// Orientation the image itself suggests, or null for square-ish/unknown images.
+function imageOrientation(meta) {
+    if (!meta || !meta.width || !meta.height) return null;
+    const ratio = meta.width / meta.height;
+    if (ratio > 1.1) return 'landscape';
+    if (ratio < 0.9) return 'portrait';
+    return null;
+}
+
+function renderBgModal() {
+    const hasImage = !!bgModalPending;
+    const committed = bgModalSnapshot && bgModalSnapshot.dataUrl;
+    const meta = bgModalPendingMeta;
+
+    document.getElementById('bg-modal-title').textContent = committed ? 'Change background' : 'Upload background';
+    document.getElementById('bg-dropzone').hidden = hasImage;
+    document.getElementById('bg-modal-preview').hidden = !hasImage;
+    document.getElementById('bg-preview-thumb').src = hasImage ? bgModalPending : '';
+    document.getElementById('bg-file-status').textContent = meta && meta.name ? meta.name : 'Your image';
+    document.getElementById('bg-file-dims').textContent = meta && meta.width && meta.height ? `${meta.width} × ${meta.height}px` : '';
+    document.getElementById('bg-apply-btn').disabled = !hasImage;
+    document.getElementById('bg-remove-btn').hidden = !(hasImage || committed);
+
+    const warning = document.getElementById('bg-orient-warning');
+    const suggested = hasImage ? imageOrientation(meta) : null;
+    if (suggested && suggested !== currentOrientation) {
+        const imageWord = suggested === 'portrait' ? 'tall (portrait)' : 'wide (landscape)';
+        const certWord = currentOrientation === 'portrait' ? 'vertical' : 'horizontal';
+        document.getElementById('bg-orient-warning-text').textContent =
+            `This image is ${imageWord}, but your certificate is ${certWord}, so it will be cropped.`;
+        document.getElementById('bg-orient-switch').textContent =
+            suggested === 'portrait' ? 'Switch to Vertical' : 'Switch to Horizontal';
+        warning.hidden = false;
+    } else {
+        warning.hidden = true;
+    }
+}
+
+function switchOrientationToImage() {
+    const suggested = imageOrientation(bgModalPendingMeta);
+    if (!suggested) return;
+    checkRadio('orientation', suggested);
+    setOrientation(suggested);
+    renderBgModal();
+    document.getElementById('bg-apply-btn').focus();
+}
+
+// The Upload card shows the committed image so it is clear a custom
+// background exists; clicking it again reopens the modal to change it.
+function updateUploadCard() {
+    const thumb = document.getElementById('upload-card-thumb');
+    const text = document.getElementById('upload-card-text');
+    if (!thumb || !text) return;
+    thumb.classList.toggle('has-image', !!customBgDataUrl);
+    thumb.style.backgroundImage = customBgDataUrl ? `url("${customBgDataUrl}")` : '';
+    text.textContent = customBgDataUrl ? 'Custom' : 'Upload';
+}
+
+function bgModalFocusables() {
+    const panel = document.querySelector('#bg-modal-overlay .modal-panel');
+    return Array.from(panel.querySelectorAll('button, [href], input:not([type="file"]), [tabindex]:not([tabindex="-1"])'))
+        .filter(el => !el.disabled && !el.hidden && el.offsetParent !== null);
+}
+
+function initBgModal() {
+    const overlay = document.getElementById('bg-modal-overlay');
+    const panel = overlay.querySelector('.modal-panel');
+    const dropzone = document.getElementById('bg-dropzone');
+
+    // Close on backdrop click, but not when a drag that began inside the
+    // panel happens to end on the backdrop.
+    overlay.addEventListener('pointerdown', (e) => { bgModalPointerOnBackdrop = e.target === overlay; });
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay && bgModalPointerOnBackdrop) closeBgModal(false);
+        bgModalPointerOnBackdrop = false;
+    });
+
+    // Drag and drop anywhere on the panel.
+    let dragDepth = 0;
+    panel.addEventListener('dragenter', (e) => { e.preventDefault(); dragDepth++; dropzone.classList.add('dragging'); });
+    panel.addEventListener('dragover', (e) => { e.preventDefault(); if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy'; });
+    panel.addEventListener('dragleave', () => { dragDepth = Math.max(0, dragDepth - 1); if (!dragDepth) dropzone.classList.remove('dragging'); });
+    panel.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dragDepth = 0;
+        dropzone.classList.remove('dragging');
+        const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+        loadBackgroundFile(file);
+    });
+    // A file dropped on the dimmed backdrop should not navigate away.
+    overlay.addEventListener('dragover', (e) => e.preventDefault());
+    overlay.addEventListener('drop', (e) => e.preventDefault());
+
+    document.addEventListener('keydown', (e) => {
+        if (!isBgModalOpen()) return;
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            closeBgModal(false);
+        } else if (e.key === 'Tab') {
+            const items = bgModalFocusables();
+            if (!items.length) return;
+            const first = items[0];
+            const last = items[items.length - 1];
+            if (e.shiftKey && (document.activeElement === first || !panel.contains(document.activeElement))) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && (document.activeElement === last || !panel.contains(document.activeElement))) {
+                e.preventDefault();
+                first.focus();
+            }
+        }
+    });
 }
 
 function handleLogoUpload(event) {
@@ -197,6 +417,7 @@ function handleLogoUpload(event) {
         statusText.innerText = file.name;
         uploadBtn.style.display = 'none';
         previewRow.style.display = 'flex';
+        refreshLayoutUi();
     };
     reader.readAsDataURL(file);
 }
@@ -212,6 +433,7 @@ function removeLogo() {
     uploadBtn.style.display = '';
     previewRow.style.display = 'none';
     if (fileInput) fileInput.value = '';
+    refreshLayoutUi();
 }
 
 function handleSignatureUpload(event) {
@@ -232,6 +454,7 @@ function handleSignatureUpload(event) {
         statusText.innerText = file.name;
         uploadBtn.style.display = 'none';
         previewRow.style.display = 'flex';
+        refreshLayoutUi();
     };
     reader.readAsDataURL(file);
 }
@@ -248,6 +471,7 @@ function removeSignature() {
     uploadBtn.style.display = '';
     previewRow.style.display = 'none';
     if (fileInput) fileInput.value = '';
+    refreshLayoutUi();
 }
 
 let toastTimer = null;
@@ -266,6 +490,26 @@ function clearEmailError() {
     const emailInput = document.getElementById('email-input');
     emailInput.classList.remove('input-error');
     document.getElementById('email-error').classList.remove('visible');
+}
+
+// Builds one printable page by cloning the live preview, so whatever the user
+// sees (including dragged positions, the seal and the logo spacing) is exactly
+// what prints. Only the recipient name changes between batch pages.
+function buildPrintCertificate(name) {
+    const cert = document.getElementById('certificate-preview').cloneNode(true);
+    cert.querySelectorAll('.move-frame').forEach(n => n.remove());
+    cert.removeAttribute('id');
+    cert.querySelectorAll('[id]').forEach(n => n.removeAttribute('id'));
+    cert.querySelectorAll('[data-move]').forEach(n => {
+        n.removeAttribute('tabindex');
+        n.removeAttribute('aria-label');
+        n.classList.remove('is-dragging', 'is-empty');
+    });
+    cert.querySelector('.cert-recipient').textContent = name;
+    cert.style.transform = 'none';
+    cert.style.margin = '0 auto';
+    cert.style.pageBreakAfter = 'always';
+    return cert;
 }
 
 function handleDownload() {
@@ -319,76 +563,7 @@ function handleDownload() {
     showToast('Preparing Print...');
 
     const batchZone = document.getElementById('batch-print-zone');
-    batchZone.innerHTML = '';
-    
-    const originalCert = document.getElementById('certificate-preview');
-    const skinClasses = Array.from(originalCert.classList).join(' ');
-    const bgSrc = originalCert.querySelector('#preview-bg-layer').src;
-    const bgDisplay = originalCert.querySelector('#preview-bg-layer').style.display;
-    const bgColor = originalCert.querySelector('#preview-bg-layer').style.backgroundColor;
-    const bgObjectFit = originalCert.querySelector('#preview-bg-layer').style.objectFit || 'fill';
-    
-    const tag = document.getElementById('tag-input').value;
-    const title = document.getElementById('title-input').value;
-    const sub = document.getElementById('sub-input').value;
-    const coach = document.getElementById('coach-input').value;
-    const date = document.getElementById('date-input').value;
-    const coachLabel = document.getElementById('coach-label-input').value;
-    const business = document.getElementById('business-input').value;
-    const location = document.getElementById('location-input').value;
-    const website = document.getElementById('website-input').value;
-    const email = document.getElementById('email-input').value;
-    const phone = document.getElementById('phone-input').value;
-    const sealClass = Array.from(document.getElementById('preview-seal').classList).find(c => c.startsWith('seal-')) || 'seal-none';
-    const sealLabel = document.getElementById('preview-seal').getAttribute('data-label') || '';
-    const logoEl = document.getElementById('preview-logo');
-    const hasLogo = logoEl.style.display === 'block';
-    const customLogoSrc = hasLogo ? logoEl.src : '';
-    const sigEl = document.getElementById('preview-signature');
-    const hasSig = sigEl.parentElement.classList.contains('has-image');
-    const signatureSrc = hasSig ? sigEl.src : '';
-    const tagEl = document.getElementById('preview-tag');
-    const tagBg = tagEl.style.backgroundColor || '';
-    const tagColor = tagEl.style.color || '';
-
-    let batchHtml = '';
-    names.forEach(name => {
-        const sanitizedName = name.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
-        batchHtml += `
-            <div class="${skinClasses}" style="transform: none; margin: 0 auto; page-break-after: always;">
-                <img class="cert-bg-layer" src="${bgSrc}" style="display: ${bgDisplay}; background-color: ${bgColor}; width: 100%; height: 100%; object-fit: ${bgObjectFit}; position: absolute; top: 0; left: 0; z-index: 0; pointer-events: none;">
-                <div class="cert-content">
-                    ${hasLogo ? `<div class="cert-logo-top"><img src="${customLogoSrc}" style="display:block;"></div>` : ''}
-                    <div class="cert-tag" style="background-color:${tagBg};color:${tagColor};">${tag}</div>
-                    <div class="cert-seal ${sealClass}" data-label="${sealLabel}"></div>
-                    <h1 class="cert-headline">${title}</h1>
-                    <p class="presented-text">This certificate is proudly presented to</p>
-                    <div class="cert-recipient">${sanitizedName}</div>
-                    <p class="cert-sub">${sub}</p>
-                    <div class="signature-area">
-                        ${hasSig ? `<div class="sig-stamp has-image"><img src="${signatureSrc}" style="display:block;"></div>` : ''}
-                        <div class="sig-details">
-                            <p class="sig-name">${coach}</p>
-                            <p class="sig-label">${coachLabel}</p>
-                            <p class="sig-date">${date}</p>
-                        </div>
-                    </div>
-                    <div class="cert-org-info">
-                        <span>${business}</span>
-                        <span>${location}</span>
-                    </div>
-                </div>
-                <div class="cert-contact-info">
-                    <span>${website}</span>
-                    <span>${email}</span>
-                    <span>${phone}</span>
-                </div>
-                <p class="cert-generated">Generated on Classcardapp.com</p>
-            </div>
-        `;
-    });
-    batchZone.innerHTML = batchHtml;
+    batchZone.replaceChildren(...names.map(buildPrintCertificate));
 
     setTimeout(() => {
         document.getElementById('status-toast').style.display = 'none';
@@ -491,6 +666,7 @@ function scalePreview() {
     if (manualScale) {
         scaler.style.transform = `scale(${manualScale})`;
         fitLayoutToScale(manualScale);
+        setUiScale(manualScale);
         return;
     }
 
@@ -514,14 +690,23 @@ function scalePreview() {
         scaler.style.transform = `scale(${mobileScale})`;
         scaler.style.marginLeft = '';
         scaler.style.marginBottom = '';
-        container.style.height = (scaledHeight + 20) + 'px';
+        const toolbar = document.getElementById('layout-toolbar');
+        const toolbarSpace = toolbar ? toolbar.offsetHeight + 10 : 0;
+        container.style.height = (scaledHeight + 20 + toolbarSpace) + 'px';
+        setUiScale(mobileScale);
     } else {
         scaler.style.transformOrigin = '';
         scaler.style.marginLeft = '';
         scaler.style.transform = `scale(${scale})`;
         fitLayoutToScale(scale);
         container.style.height = '';
+        setUiScale(scale);
     }
+}
+
+function setUiScale(scale) {
+    const scaler = document.getElementById('preview-scaler');
+    if (scaler && scale > 0) scaler.style.setProperty('--ui-scale', (1 / scale).toFixed(4));
 }
 
 window.onload = function() {
@@ -531,6 +716,8 @@ window.onload = function() {
     if (savedWidth) updateSidebarWidth(savedWidth);
     window.addEventListener('resize', scalePreview);
     scalePreview();
+    initLayoutEditor();
+    initBgModal();
     updatePreview();
     setSkin('plain');
     if (window.matchMedia('(max-width: 850px)').matches) {
@@ -573,6 +760,7 @@ function setSeal(type) {
         seal.classList.add('active', `seal-${type}`);
         updateSealLabel();
     }
+    refreshLayoutUi();
 }
 
 function updateSealLabel() {
@@ -605,3 +793,289 @@ document.addEventListener('click', function(e) {
         document.querySelectorAll('.listbox.open').forEach(lb => lb.classList.remove('open'));
     }
 });
+
+// --- Layout editor ---
+// "Adjust layout" lets people drag each certificate element so it lines up
+// with their own background. Elements keep their normal flow position and
+// get an extra offset via the CSS `translate` property, so the default design
+// is untouched until something is moved. Offsets are kept per orientation,
+// because a position tuned for Horizontal is wrong for Vertical.
+
+const MOVABLE_LABELS = {
+    logo: 'Logo',
+    badge: 'Badge',
+    seal: 'Rank seal',
+    title: 'Award title',
+    presented: 'Presented line',
+    recipient: 'Recipient name',
+    description: 'Description',
+    signature: 'Signature',
+    business: 'Business details',
+    contact: 'Contact details',
+};
+const DRAG_THRESHOLD_PX = 3;
+const NUDGE_PX = 1;
+const NUDGE_LARGE_PX = 10;
+
+const layoutOffsets = { landscape: {}, portrait: {} };
+let layoutEditing = false;
+let layoutActiveEl = null;
+let layoutHoverEl = null;
+let layoutDrag = null;
+
+function previewCert() {
+    return document.getElementById('certificate-preview');
+}
+
+function movableElements() {
+    return Array.from(previewCert().querySelectorAll('[data-move]'));
+}
+
+function offsetsForOrientation() {
+    return layoutOffsets[currentOrientation];
+}
+
+function getMoveOffset(key) {
+    return offsetsForOrientation()[key] || { x: 0, y: 0 };
+}
+
+function writeTranslate(el, x, y) {
+    el.style.translate = x || y ? `${x}px ${y}px` : '';
+}
+
+function setMoveOffset(el, x, y) {
+    const key = el.dataset.move;
+    x = Math.round(x);
+    y = Math.round(y);
+    if (x === 0 && y === 0) delete offsetsForOrientation()[key];
+    else offsetsForOrientation()[key] = { x, y };
+    writeTranslate(el, x, y);
+    updateLayoutControls();
+    refreshMoveFrame();
+}
+
+function applyLayoutOffsets() {
+    movableElements().forEach(el => {
+        const o = getMoveOffset(el.dataset.move);
+        writeTranslate(el, o.x, o.y);
+    });
+    refreshLayoutUi();
+}
+
+// Rendered size ÷ layout size: the preview's current zoom.
+function previewScale() {
+    const cert = previewCert();
+    const s = cert.getBoundingClientRect().width / cert.offsetWidth;
+    return s > 0 ? s : 1;
+}
+
+// An element's box in unscaled certificate pixels (includes its offset).
+function boxInCert(el, scale) {
+    const s = scale || previewScale();
+    const c = previewCert().getBoundingClientRect();
+    const r = el.getBoundingClientRect();
+    return { left: (r.left - c.left) / s, top: (r.top - c.top) / s, width: r.width / s, height: r.height / s };
+}
+
+// Keeps an element on the canvas: its box may touch the edges but not leave.
+function clampMoveOffset(el, x, y, scale) {
+    const cert = previewCert();
+    const current = getMoveOffset(el.dataset.move);
+    const box = boxInCert(el, scale);
+    const baseLeft = box.left - current.x;
+    const baseTop = box.top - current.y;
+    const clamp = (v, a, b) => Math.min(Math.max(v, Math.min(a, b)), Math.max(a, b));
+    return {
+        x: clamp(x, -baseLeft, cert.offsetWidth - baseLeft - box.width),
+        y: clamp(y, -baseTop, cert.offsetHeight - baseTop - box.height),
+    };
+}
+
+function isMovableEmpty(el) {
+    const key = el.dataset.move;
+    if (key === 'logo') return document.getElementById('preview-logo').style.display !== 'block';
+    if (key === 'seal') return !el.classList.contains('active');
+    return el.offsetWidth === 0 || el.offsetHeight === 0;
+}
+
+// Re-syncs empty flags, tab stops and the selection frame after content changes.
+function refreshLayoutUi() {
+    if (!previewCert()) return;
+    movableElements().forEach(el => {
+        const empty = isMovableEmpty(el);
+        el.classList.toggle('is-empty', empty);
+        if (layoutEditing && !empty) {
+            el.setAttribute('tabindex', '0');
+            el.setAttribute('aria-label', `${MOVABLE_LABELS[el.dataset.move]}. Use arrow keys to move.`);
+        } else {
+            el.removeAttribute('tabindex');
+            el.removeAttribute('aria-label');
+        }
+    });
+    if (layoutActiveEl && isMovableEmpty(layoutActiveEl)) layoutActiveEl = null;
+    updateLayoutControls();
+    refreshMoveFrame();
+}
+
+function updateLayoutControls() {
+    const toggle = document.getElementById('layout-toggle');
+    const reset = document.getElementById('layout-reset');
+    if (toggle) {
+        toggle.setAttribute('aria-pressed', layoutEditing ? 'true' : 'false');
+        document.getElementById('layout-toggle-text').textContent = layoutEditing ? 'Done' : 'Adjust layout';
+    }
+    if (reset) reset.disabled = Object.keys(offsetsForOrientation()).length === 0;
+}
+
+function refreshMoveFrame() {
+    const frame = document.getElementById('move-frame');
+    if (!frame) return;
+    const el = layoutEditing ? ((layoutDrag && layoutDrag.el) || layoutHoverEl || layoutActiveEl) : null;
+    if (!el || isMovableEmpty(el)) {
+        frame.classList.remove('visible');
+        return;
+    }
+    const pad = 6;
+    const box = boxInCert(el);
+    frame.style.left = `${box.left - pad}px`;
+    frame.style.top = `${box.top - pad}px`;
+    frame.style.width = `${box.width + pad * 2}px`;
+    frame.style.height = `${box.height + pad * 2}px`;
+    frame.classList.add('visible');
+    frame.classList.toggle('is-selected', el === layoutActiveEl);
+
+    const label = document.getElementById('move-frame-label');
+    label.textContent = MOVABLE_LABELS[el.dataset.move] || '';
+    // Flip the label inside the canvas when it would be clipped.
+    frame.classList.toggle('label-below', box.top - pad - label.offsetHeight - 4 < 0);
+    frame.classList.toggle('label-right', box.left - pad + label.offsetWidth > previewCert().offsetWidth);
+}
+
+function selectMovable(el) {
+    layoutActiveEl = el;
+    if (el) el.focus({ preventScroll: true });
+    refreshMoveFrame();
+}
+
+function setLayoutMode(on) {
+    layoutEditing = !!on;
+    document.body.classList.toggle('layout-editing', layoutEditing);
+    if (!layoutEditing) {
+        layoutActiveEl = null;
+        layoutHoverEl = null;
+        layoutDrag = null;
+        document.body.classList.remove('layout-dragging');
+        if (document.activeElement && document.activeElement.closest && document.activeElement.closest('[data-move]')) {
+            document.activeElement.blur();
+        }
+    }
+    refreshLayoutUi();
+}
+
+function toggleLayoutMode() {
+    setLayoutMode(!layoutEditing);
+    if (layoutEditing) {
+        showToast('Drag any element to move it. Arrow keys nudge, double-click resets.', 3500);
+    }
+}
+
+function resetLayout() {
+    layoutOffsets[currentOrientation] = {};
+    applyLayoutOffsets();
+}
+
+function onLayoutPointerDown(e) {
+    if (!layoutEditing || e.button !== 0) return;
+    const el = e.target.closest('[data-move]');
+    if (!el || el.classList.contains('is-empty')) {
+        selectMovable(null);
+        return;
+    }
+    e.preventDefault();
+    selectMovable(el);
+    const o = getMoveOffset(el.dataset.move);
+    layoutDrag = { el, pointerId: e.pointerId, startX: e.clientX, startY: e.clientY, ox: o.x, oy: o.y, scale: previewScale(), moved: false };
+    try { el.setPointerCapture(e.pointerId); } catch (err) { /* pointer already released */ }
+}
+
+function onLayoutPointerMove(e) {
+    if (!layoutDrag || e.pointerId !== layoutDrag.pointerId) return;
+    const d = layoutDrag;
+    const screenDx = e.clientX - d.startX;
+    const screenDy = e.clientY - d.startY;
+    if (!d.moved) {
+        if (Math.hypot(screenDx, screenDy) < DRAG_THRESHOLD_PX) return;
+        d.moved = true;
+        d.el.classList.add('is-dragging');
+        document.body.classList.add('layout-dragging');
+    }
+    const next = clampMoveOffset(d.el, d.ox + screenDx / d.scale, d.oy + screenDy / d.scale, d.scale);
+    setMoveOffset(d.el, next.x, next.y);
+}
+
+function onLayoutPointerUp(e) {
+    if (!layoutDrag || e.pointerId !== layoutDrag.pointerId) return;
+    const el = layoutDrag.el;
+    el.classList.remove('is-dragging');
+    document.body.classList.remove('layout-dragging');
+    try { el.releasePointerCapture(e.pointerId); } catch (err) { /* already released */ }
+    layoutDrag = null;
+    refreshMoveFrame();
+}
+
+function onLayoutKeyDown(e) {
+    if (!layoutEditing) return;
+    const el = e.target.closest && e.target.closest('[data-move]');
+    if (!el || !previewCert().contains(el)) return;
+    if (e.key === 'Escape') {
+        el.blur();
+        selectMovable(null);
+        return;
+    }
+    const step = e.shiftKey ? NUDGE_LARGE_PX : NUDGE_PX;
+    const delta = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }[e.key];
+    if (!delta) return;
+    e.preventDefault();
+    const o = getMoveOffset(el.dataset.move);
+    const next = clampMoveOffset(el, o.x + delta[0], o.y + delta[1]);
+    layoutActiveEl = el;
+    setMoveOffset(el, next.x, next.y);
+}
+
+function initLayoutEditor() {
+    const cert = previewCert();
+    if (!cert) return;
+    cert.addEventListener('pointerdown', onLayoutPointerDown);
+    cert.addEventListener('pointermove', onLayoutPointerMove);
+    cert.addEventListener('pointerup', onLayoutPointerUp);
+    cert.addEventListener('pointercancel', onLayoutPointerUp);
+    cert.addEventListener('keydown', onLayoutKeyDown);
+    cert.addEventListener('focusin', (e) => {
+        const el = layoutEditing && e.target.closest('[data-move]');
+        if (el) { layoutActiveEl = el; refreshMoveFrame(); }
+    });
+    cert.addEventListener('pointerover', (e) => {
+        if (!layoutEditing || e.pointerType === 'touch') return;
+        const el = e.target.closest('[data-move]');
+        layoutHoverEl = el && !el.classList.contains('is-empty') ? el : null;
+        refreshMoveFrame();
+    });
+    cert.addEventListener('pointerleave', () => {
+        layoutHoverEl = null;
+        refreshMoveFrame();
+    });
+    cert.addEventListener('dblclick', (e) => {
+        if (!layoutEditing) return;
+        const el = e.target.closest('[data-move]');
+        if (el && !el.classList.contains('is-empty')) {
+            layoutActiveEl = el;
+            setMoveOffset(el, 0, 0);
+        }
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && layoutEditing && !isBgModalOpen() && !(e.target.closest && e.target.closest('[data-move]'))) {
+            setLayoutMode(false);
+        }
+    });
+    refreshLayoutUi();
+}
