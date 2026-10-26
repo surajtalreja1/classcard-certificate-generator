@@ -397,3 +397,14 @@ test("an empty recipient prints a blank name line instead of a placeholder", asy
   await expect(printed).toHaveText("");
   await expect(printed).toHaveClass(/is-blank/);
 });
+
+test("presented line is editable and hides when empty", async ({ page }) => {
+  await page.goto("./");
+  const line = page.locator("#preview-presented");
+  await expect(page.locator("#presented-input")).toHaveValue("This certificate is proudly presented to");
+  await expect(line).toHaveText("This certificate is proudly presented to");
+  await page.fill("#presented-input", "Awarded to");
+  await expect(line).toHaveText("Awarded to");
+  await page.fill("#presented-input", "");
+  await expect(line).toBeHidden();
+});
