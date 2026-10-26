@@ -1208,8 +1208,11 @@ body.theme-dark .theme-toggle-btn:hover {
 .preview-container {
     flex: 1;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    /* Keep the top reachable when zoomed in past the pane height */
+    justify-content: safe center;
     padding: 60px;
     overflow: auto;
     position: relative;
@@ -1905,9 +1908,9 @@ body.printing > #batch-print-zone {
    LAYOUT EDITOR ("Adjust layout")
    ------------------------------------------------------------------ */
 .layout-toolbar {
-    position: absolute;
-    bottom: 24px;
-    left: 24px;
+    position: relative;
+    margin-bottom: 16px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     gap: 6px;
@@ -1926,14 +1929,8 @@ body.printing > #batch-print-zone {
     gap: 6px;
 }
 
-.layout-toggle[aria-pressed="true"] {
-    background: var(--classcard-blue);
-    border-color: var(--classcard-blue);
-    color: #ffffff;
-}
-
-.layout-toggle[aria-pressed="true"]:hover {
-    background: var(--classcard-blue-dark);
+.layout-toolbar [hidden] {
+    display: none;
 }
 
 .layout-toolbar .btn:disabled {
