@@ -121,14 +121,18 @@ test("adjust layout toggles edit mode", async ({ page }) => {
   await expect(reset).toBeHidden();
 });
 
-test("the layout toolbar sits centred above the certificate", async ({ page }) => {
+test("one toolbar holds layout and zoom controls, centred below the certificate", async ({ page }) => {
   await openStudio(page);
+  const toolbar = page.locator("#layout-toolbar");
+  await expect(toolbar.locator("#layout-toggle")).toBeVisible();
+  await expect(toolbar.locator("#preview-zoom-slider")).toBeVisible();
+  await expect(toolbar.locator(".toolbar-divider")).toBeVisible();
   for (const orientation of ["Horizontal", "Vertical"]) {
     await page.click(`label[aria-label="${orientation}"]`);
-    const toolbar = await boxOf(page, "#layout-toolbar");
+    const bar = await boxOf(page, "#layout-toolbar");
     const cert = await boxOf(page, "#certificate-preview");
-    expect(toolbar.y + toolbar.height).toBeLessThanOrEqual(cert.y);
-    expect(toolbar.x + toolbar.width / 2).toBeCloseTo(cert.x + cert.width / 2, 0);
+    expect(bar.y).toBeGreaterThanOrEqual(cert.y + cert.height);
+    expect(bar.x + bar.width / 2).toBeCloseTo(cert.x + cert.width / 2, 0);
   }
 });
 

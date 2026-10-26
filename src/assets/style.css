@@ -1218,22 +1218,6 @@ body.theme-dark .theme-toggle-btn:hover {
     position: relative;
 }
 
-/* Floating Zoom Toolbar */
-.zoom-toolbar {
-    position: absolute;
-    bottom: 24px;
-    right: 24px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--bg-sidebar);
-    border: 1px solid var(--border-ui);
-    border-radius: 10px;
-    padding: 6px 10px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
-    z-index: 50;
-}
-
 .btn-icon {
     width: 34px;
     height: 34px;
@@ -1907,10 +1891,13 @@ body.printing > #batch-print-zone {
 /* ------------------------------------------------------------------
    LAYOUT EDITOR ("Adjust layout")
    ------------------------------------------------------------------ */
+/* One floating toolbar, bottom centre: layout controls | zoom controls */
 .layout-toolbar {
-    position: relative;
-    margin-bottom: 16px;
-    flex-shrink: 0;
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: calc(100% - 32px);
     display: flex;
     align-items: center;
     gap: 6px;
@@ -1931,6 +1918,27 @@ body.printing > #batch-print-zone {
 
 .layout-toolbar [hidden] {
     display: none;
+}
+
+.toolbar-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.toolbar-divider {
+    align-self: stretch;
+    width: 1px;
+    margin: 4px 6px;
+    background: var(--border-ui);
+    flex-shrink: 0;
+}
+
+/* Room under the canvas so the floating toolbar does not cover it */
+@media (min-width: 851px) {
+    .preview-container {
+        padding-bottom: 100px;
+    }
 }
 
 .layout-toolbar .btn:disabled {
@@ -2289,6 +2297,7 @@ body.theme-dark .bg-orient-warning .btn {
     /* Toolbar sits above the certificate in the Preview tab */
     .layout-toolbar {
         position: static;
+        transform: none;
         margin: 0 auto 10px;
         flex-shrink: 0;
     }
