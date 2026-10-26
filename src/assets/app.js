@@ -662,9 +662,8 @@ function scalePreview() {
         const h = cert ? cert.offsetHeight : 794;
         scaler.style.marginBottom = `${h * (s - 1)}px`;
     };
-    // The layout toolbar sits above the canvas, so leave room for it.
-    const toolbar = document.getElementById('layout-toolbar');
-    const toolbarSpace = toolbar ? toolbar.offsetHeight + 16 : 0;
+    // On mobile the toolbar sits above the canvas, so leave room for it.
+    // On desktop it floats over the pane's enlarged bottom padding instead.
 
     if (manualScale) {
         scaler.style.transform = `scale(${manualScale})`;
@@ -686,7 +685,7 @@ function scalePreview() {
     // both stay fully visible.
     const paneStyle = getComputedStyle(container);
     const innerHeight = availableHeight - parseFloat(paneStyle.paddingTop) - parseFloat(paneStyle.paddingBottom);
-    const scaleY = (innerHeight - toolbarSpace) / targetHeight;
+    const scaleY = innerHeight / targetHeight;
     const scale = isMobile ? scaleX : Math.min(scaleX, scaleY, 0.9);
     scaler.style.zoom = '';
     if (isMobile) {
@@ -697,6 +696,8 @@ function scalePreview() {
         scaler.style.transform = `scale(${mobileScale})`;
         scaler.style.marginLeft = '';
         scaler.style.marginBottom = '';
+        const toolbar = document.getElementById('layout-toolbar');
+        const toolbarSpace = toolbar ? toolbar.offsetHeight + 10 : 0;
         container.style.height = (scaledHeight + 20 + toolbarSpace) + 'px';
         setUiScale(mobileScale);
     } else {
