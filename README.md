@@ -19,6 +19,10 @@ The project is a lightweight, frontend-only web application designed to help use
 * **Native Browser Printing:** Instead of relying on error-prone third-party PDF libraries (like `html2pdf`), the application intelligently leverages the browser's native `window.print()` functionality. When exporting, it clones the live preview once per recipient into a print zone with print-specific CSS and page breaks, so every printed page matches the preview exactly, including any adjusted layout.
 * **Responsive UI:** The workspace includes a draggable sidebar resizer, a zoom slider for the preview canvas, dark/light mode toggling, and a specific mobile-friendly tabbed view (Build vs. View).
 
+## Design System
+
+UI tokens, spacing, type, components and breakpoints are documented in [DESIGN.md](DESIGN.md). Check it before adding or changing sidebar controls.
+
 ## Architecture & Technical Details
 
 * **Asset Management:** Background skins and the logo are managed via Base64 strings (in `skins.js` or `.b64` files) and SVGs in the `skins/` directory. This approach ensures images render reliably even when the application is run directly from the local filesystem (`file://`), bypassing strict browser CORS security policies.
