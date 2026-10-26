@@ -34,7 +34,7 @@ Use the variable, not the hex.
 | `--text-main` | `#241c15` | `#e6f1ff` | Body text |
 | `--text-muted` | `#9b9b9b` | `rgba(148,163,184,1)` | Hints, descriptions |
 | `--border-ui` | `#e2e2e2` | `rgba(255,255,255,0.1)` | Dividers, toolbar borders |
-| `--classcard-blue` | `#0071b2` | same | Focus, slider thumb, edit outlines |
+| `--classcard-blue` | `#0071b2` | same | Slider thumb, edit outlines, drop-zone hover |
 
 Fixed greys used directly (Tailwind zinc scale):
 
@@ -46,7 +46,7 @@ Fixed greys used directly (Tailwind zinc scale):
 | `rgba(24,24,27,0.1)` | Input and outline-button borders |
 | `rgba(113,113,122,1)` | Field descriptions, modal close icon |
 | `#dc2626` | Error toast |
-| `#3b82f6` | Input focus ring (2px inset) |
+| `#3b82f6` | Focus rings: 2px inset on inputs, 2px outline elsewhere |
 
 ## Spacing
 
@@ -75,7 +75,9 @@ for text and **Ballet** for the recipient name, loaded from Google Fonts.
 | Field label | 14px / 500, line-height 1.5rem |
 | Input text, buttons, descriptions | 14px |
 | Secondary text, card labels, toast | 13px |
-| Smallest UI text (hints, dims) | 12px |
+| Smallest UI text (hints, dims, powered-by) | 12px |
+| `.btn-xs` label | 11px / 600 (shared with the schedule printer) |
+| Modal title | 16px / 600 (shared with the schedule printer) |
 
 Certificate type (do not change casually, it is the product):
 
@@ -90,12 +92,16 @@ Certificate type (do not change casually, it is the product):
 
 | Value | Use |
 |---|---|
-| 6px | Small buttons (`.btn-xs`), badge pill, remove buttons |
-| 8px | Buttons, inputs, cards, warning banners |
+| 2–4px | Tiny inner shapes: thumbnails, slider tracks, orientation icons |
+| 6px | Small buttons (`.btn-xs`), badge pill |
+| 8px | Buttons, inputs, cards, dropdown menus, warning banners |
 | 10px | Floating toolbars |
 | 12px | Drop zones, image preview wells |
 | 16px | Modal panel (20px top corners as a mobile bottom sheet) |
 | 50% | Colour swatches, seals, icon wells |
+| 100px | Toast pill |
+
+Inner highlight pseudo-elements use the parent radius minus 1px.
 
 ## Components
 
@@ -108,7 +114,8 @@ Certificate type (do not change casually, it is the product):
 - `.btn-plain` borderless. Tertiary actions such as Reset layout, Cancel
   in tight spaces, and the zoom value.
 - `.btn-icon` 34px square for +/- controls. `.btn-xs` for inline actions
-  inside a row (Replace, Switch to Vertical).
+  inside a row (Remove, Replace, Switch to Vertical). Buttons keep their
+  default 14px size everywhere, toolbars and mobile included.
 - Disabled: 45% opacity, default cursor. Hidden-until-relevant beats
   disabled when the action makes no sense yet (Reset layout).
 
@@ -132,7 +139,8 @@ open at a time; click outside closes.
 
 **Upload area** (`.upload-area`). Dashed `.custom-file-upload` button,
 replaced after upload by a `.upload-preview-row` of 36px thumb, filename
-and Remove. Used for logo and signature. Backgrounds use the modal below.
+and a `.btn.btn-outline.btn-xs` Remove. Used for logo and signature.
+Backgrounds use the modal below.
 
 **Modal** (`.modal-overlay` > `.modal-panel`). 25% black backdrop,
 440px white panel, header / body / footer. Closes on Escape, the ×, and a
@@ -146,8 +154,9 @@ the preview, 10px radius, soft shadow. Groups are separated by a 1px
 group: zoom controls (desktop only). On mobile it sits statically above
 the certificate.
 
-**Toast** (`#status-toast`). Black pill, top centre, 13px / 700. Add
-`.toast-error` for red. Auto-dismisses when given a duration.
+**Toast** (`#status-toast`). Black pill, 24px from the top, centred,
+13px / 700, styled in the stylesheet (not inline). Add `.toast-error` for
+red. Auto-dismisses when given a duration.
 
 ## Preview and certificate
 
