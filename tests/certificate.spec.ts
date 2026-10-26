@@ -343,3 +343,57 @@ test("non-image files are rejected in the modal", async ({ page }) => {
   await expect(page.locator("#bg-modal-error")).toBeVisible();
   await expect(page.locator("#bg-apply-btn")).toBeDisabled();
 });
+
+// --- Seal label style and empty fields ---
+
+test("seal label style only shows when a rank seal is chosen", async ({ page }) => {
+  await page.goto("./");
+  const field = page.locator("#seal-label-field");
+  await expect(field).toBeHidden();
+  await page.click('label[aria-label="Gold"]');
+  await expect(field).toBeVisible();
+  await page.click('label[aria-label="None"]');
+  await expect(field).toBeHidden();
+});
+
+test("empty inputs are hidden from the certificate", async ({ page }) => {
+  await page.goto("./");
+  const pairs: [string, string][] = [
+    ["#tag-input", "#preview-tag"],
+    ["#title-input", "#preview-title"],
+    ["#recipient-input", "#preview-recipient"],
+    ["#sub-input", "#preview-sub"],
+  ];
+  for (const [input, preview] of pairs) {
+    await expect(page.locator(preview)).toBeVisible();
+    await page.fill(input, "   ");
+    await expect(page.locator(preview)).toBeHidden();
+    await page.fill(input, "Something");
+    await expect(page.locator(preview)).toBeVisible();
+  }
+
+  // The signature block disappears once its name, title and date are all empty.
+  await page.fill("#coach-input", "");
+  await expect(page.locator("#preview-coach")).toBeHidden();
+  await expect(page.locator("#certificate-preview .signature-area")).toBeVisible();
+  await page.fill("#coach-label-input", "");
+  await page.fill("#date-input", "");
+  await expect(page.locator("#certificate-preview .signature-area")).toBeHidden();
+
+  await page.fill("#business-input", "");
+  await page.fill("#location-input", "");
+  await expect(page.locator("#certificate-preview .cert-org-info")).toBeHidden();
+});
+
+test("an empty recipient prints a blank name line instead of a placeholder", async ({ page }) => {
+  await stubSideEffects(page);
+  await page.goto("./");
+  await page.evaluate(() => { window.print = () => {}; });
+  await page.fill("#recipient-input", "");
+  await page.fill("#email-input", "test@example.com");
+  await page.click("#download-btn");
+  const printed = page.locator("#batch-print-zone .cert-recipient");
+  await expect(printed).toHaveCount(1);
+  await expect(printed).toHaveText("");
+  await expect(printed).toHaveClass(/is-blank/);
+});

@@ -278,6 +278,15 @@ body.theme-dark .input-field::placeholder {
     gap: 12px;
 }
 
+.field[hidden] {
+    display: none;
+}
+
+/* Certificate elements whose input is empty */
+.cert-render-area .is-blank {
+    display: none !important;
+}
+
 label.field-label {
     font-size: 14px;
     line-height: 1.5rem;
