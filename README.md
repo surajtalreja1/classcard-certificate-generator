@@ -11,10 +11,12 @@ The project is a lightweight, frontend-only web application designed to help use
 * **Theming & Customization:**
   * **Orientation:** Certificates can be Horizontal (A4 landscape, the default) or Vertical (A4 portrait). The preview, background artwork and printed page size all follow the selected orientation.
   * **Skins:** Users can select different background themes (Plain, Gymnastics, Dance, Football, Swim, Academic, Wellness, or an uploaded image) which are stored as SVG assets. Each illustrated skin has a landscape design in `skins/` and a portrait design in `skins/portrait/`.
+  * **Custom Backgrounds:** The Upload card opens a modal where users can click or drag and drop their own image. It previews live on the certificate, warns when the image's shape does not match the orientation (with a one-click switch), and can be changed or removed later from the same card.
+  * **Adjust Layout:** The "Adjust layout" button in the preview lets users drag any element (logo, badge, seal, title, recipient, description, signature, business and contact lines) to line it up with their background. Arrow keys nudge the selected element, double-click resets it, and "Reset layout" restores the default design. Positions are kept separately for Horizontal and Vertical.
   * **Custom Text:** Fields for Award Title, Recipient, Narrative, Signatures, and Dates.
   * **Rank Seals:** Option to add Gold, Silver, or Bronze seals with customizable labels (e.g., 1st, 2nd, 3rd vs. Gold, Silver, Bronze).
   * **Logos:** Users can upload their own academy/school logo to appear alongside the default Classcard branding.
-* **Native Browser Printing:** Instead of relying on error-prone third-party PDF libraries (like `html2pdf`), the application intelligently leverages the browser's native `window.print()` functionality. When exporting, it structures the DOM with print-specific CSS and page breaks, ensuring perfectly scaled, high-quality A4 PDFs.
+* **Native Browser Printing:** Instead of relying on error-prone third-party PDF libraries (like `html2pdf`), the application intelligently leverages the browser's native `window.print()` functionality. When exporting, it clones the live preview once per recipient into a print zone with print-specific CSS and page breaks, so every printed page matches the preview exactly, including any adjusted layout.
 * **Responsive UI:** The workspace includes a draggable sidebar resizer, a zoom slider for the preview canvas, dark/light mode toggling, and a specific mobile-friendly tabbed view (Build vs. View).
 
 ## Architecture & Technical Details

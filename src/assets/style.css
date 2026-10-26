@@ -1901,3 +1901,448 @@ body.printing > #batch-print-zone {
        portrait when the Vertical orientation is selected. */
     @page { size: A4 landscape; margin: 0; }
 }
+/* ------------------------------------------------------------------
+   LAYOUT EDITOR ("Adjust layout")
+   ------------------------------------------------------------------ */
+.layout-toolbar {
+    position: absolute;
+    bottom: 24px;
+    left: 24px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-sidebar);
+    border: 1px solid var(--border-ui);
+    border-radius: 10px;
+    padding: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
+    z-index: 50;
+    white-space: nowrap;
+}
+
+.layout-toolbar .btn {
+    align-items: center;
+    font-size: 13px;
+    gap: 6px;
+}
+
+.layout-toggle[aria-pressed="true"] {
+    background: var(--classcard-blue);
+    border-color: var(--classcard-blue);
+    color: #ffffff;
+}
+
+.layout-toggle[aria-pressed="true"]:hover {
+    background: var(--classcard-blue-dark);
+}
+
+.layout-toolbar .btn:disabled {
+    opacity: 0.45;
+    cursor: default;
+    background: transparent;
+}
+
+/* Edit chrome lives inside the zoomed certificate; --ui-scale (1 / zoom)
+   keeps outlines and labels the same on-screen size at any zoom level. */
+body.layout-editing #certificate-preview [data-move] {
+    cursor: grab;
+    outline: calc(1px * var(--ui-scale, 1)) dashed rgba(0, 113, 178, 0.45);
+    outline-offset: calc(3px * var(--ui-scale, 1));
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+body.layout-editing #certificate-preview [data-move]:focus-visible {
+    outline-style: solid;
+    outline-color: rgba(0, 113, 178, 0.9);
+}
+
+body.layout-editing #certificate-preview [data-move].is-empty {
+    outline: none;
+    pointer-events: none;
+    cursor: default;
+}
+
+body.layout-dragging,
+body.layout-dragging * {
+    cursor: grabbing !important;
+}
+
+.move-frame {
+    position: absolute;
+    display: none;
+    border: calc(1.5px * var(--ui-scale, 1)) solid rgba(0, 113, 178, 0.55);
+    border-radius: calc(6px * var(--ui-scale, 1));
+    pointer-events: none;
+    z-index: 200;
+}
+
+.move-frame.visible {
+    display: block;
+}
+
+.move-frame.is-selected {
+    border-color: var(--classcard-blue);
+    box-shadow: 0 0 0 calc(3px * var(--ui-scale, 1)) rgba(0, 113, 178, 0.15);
+}
+
+.move-frame-label {
+    position: absolute;
+    left: calc(-1.5px * var(--ui-scale, 1));
+    bottom: 100%;
+    margin-bottom: calc(4px * var(--ui-scale, 1));
+    background: var(--classcard-blue);
+    color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: calc(12px * var(--ui-scale, 1));
+    font-weight: 600;
+    line-height: 1.5;
+    letter-spacing: normal;
+    text-transform: none;
+    padding: calc(2px * var(--ui-scale, 1)) calc(8px * var(--ui-scale, 1));
+    border-radius: calc(4px * var(--ui-scale, 1));
+    white-space: nowrap;
+}
+
+.move-frame.label-below .move-frame-label {
+    bottom: auto;
+    top: 100%;
+    margin-bottom: 0;
+    margin-top: calc(4px * var(--ui-scale, 1));
+}
+
+.move-frame.label-right .move-frame-label {
+    left: auto;
+    right: calc(-1.5px * var(--ui-scale, 1));
+}
+
+/* Upload card once a custom background is set */
+.thumb-upload.has-image {
+    background-size: cover;
+    background-position: center;
+}
+
+.thumb-upload.has-image svg {
+    display: none;
+}
+
+/* ------------------------------------------------------------------
+   MODAL (matches the schedule printer's class modal)
+   ------------------------------------------------------------------ */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(24, 24, 27, 0.25);
+    z-index: 900;
+    display: none;
+    justify-content: center;
+    padding: 64px 16px;
+    overflow-y: auto;
+}
+
+.modal-overlay.open {
+    display: flex;
+}
+
+body.modal-open {
+    overflow: hidden;
+}
+
+.modal-panel {
+    background: white;
+    border-radius: 16px;
+    width: 440px;
+    max-width: calc(100vw - 32px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(24, 24, 27, 0.06);
+    padding: 24px;
+    align-self: flex-start;
+    color: var(--text-main);
+}
+
+body.theme-dark .modal-panel {
+    background: rgba(24, 24, 27, 1);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.modal-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: rgba(24, 24, 27, 1);
+    margin: 0;
+}
+
+body.theme-dark .modal-header h3 {
+    color: white;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: rgba(113, 113, 122, 1);
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+
+.modal-close:hover {
+    color: rgba(24, 24, 27, 1);
+}
+
+body.theme-dark .modal-close:hover {
+    color: white;
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.modal-footer-start {
+    margin-right: auto;
+}
+
+.modal-footer .btn:disabled {
+    opacity: 0.45;
+    cursor: default;
+}
+
+/* Background modal contents */
+.bg-dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    padding: 32px 16px;
+    border: 1px dashed rgba(24, 24, 27, 0.2);
+    border-radius: 12px;
+    background: var(--bg-input);
+    color: var(--text-main);
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.bg-dropzone:hover,
+.bg-dropzone.dragging {
+    background: var(--bg-promo);
+    border-color: var(--classcard-blue);
+}
+
+.bg-dropzone:focus-visible {
+    outline: 2px solid var(--classcard-blue);
+    outline-offset: 2px;
+}
+
+body.theme-dark .bg-dropzone {
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.bg-dropzone[hidden],
+.bg-modal-preview[hidden],
+.bg-orient-warning[hidden],
+.bg-modal-error[hidden],
+.modal-footer [hidden] {
+    display: none;
+}
+
+.bg-dropzone-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(24, 24, 27, 0.05);
+    color: rgba(24, 24, 27, 0.7);
+    margin-bottom: 4px;
+}
+
+body.theme-dark .bg-dropzone-icon {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.bg-dropzone-title {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.bg-dropzone-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.bg-modal-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.bg-modal-image-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    border-radius: 12px;
+    background: rgba(24, 24, 27, 0.04);
+    border: 1px solid rgba(24, 24, 27, 0.08);
+    overflow: hidden;
+}
+
+body.theme-dark .bg-modal-image-wrap {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.bg-modal-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.bg-modal-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.bg-modal-meta-text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.bg-modal-filename {
+    font-size: 13px;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bg-modal-dims {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.bg-orient-warning {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: rgba(254, 243, 199, 1);
+    color: rgba(146, 64, 14, 1);
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.bg-orient-warning span {
+    flex: 1;
+}
+
+.bg-orient-warning .btn {
+    flex-shrink: 0;
+    color: rgba(146, 64, 14, 1);
+    border-color: rgba(146, 64, 14, 0.3);
+}
+
+body.theme-dark .bg-orient-warning {
+    background: rgba(146, 64, 14, 0.25);
+    color: rgba(254, 243, 199, 1);
+}
+
+body.theme-dark .bg-orient-warning .btn {
+    color: rgba(254, 243, 199, 1);
+    border-color: rgba(254, 243, 199, 0.3);
+}
+
+.bg-modal-error {
+    font-size: 13px;
+    color: rgba(185, 28, 28, 1);
+    margin: 0;
+}
+
+.modal-body .field-description {
+    margin: 0;
+}
+
+@media (max-width: 850px) {
+    /* Toolbar sits above the certificate in the Preview tab */
+    .layout-toolbar {
+        position: static;
+        margin: 0 auto 10px;
+        flex-shrink: 0;
+    }
+
+    /* Bottom-sheet modal */
+    .modal-overlay {
+        padding: 0;
+        align-items: flex-end;
+    }
+
+    .modal-panel {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 20px 20px 0 0;
+        padding: 0;
+        align-self: flex-end;
+        max-height: 90vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .modal-header {
+        padding: 20px 20px 0;
+        margin-bottom: 0;
+    }
+
+    .modal-body {
+        padding: 16px 20px;
+        overflow-y: auto;
+        flex: 1;
+        min-height: 0;
+    }
+
+    .modal-footer {
+        position: sticky;
+        bottom: 0;
+        padding: 12px 20px;
+        padding-bottom: max(12px, env(safe-area-inset-bottom));
+        margin-top: 0;
+        background: var(--bg-sidebar);
+        border-top: 1px solid var(--border-ui);
+        border-radius: 0;
+    }
+
+    body.theme-dark .modal-footer {
+        background: rgba(24, 24, 27, 1);
+    }
+}
+
+@media print {
+    .modal-overlay, .layout-toolbar, .move-frame {
+        display: none !important;
+    }
+}
