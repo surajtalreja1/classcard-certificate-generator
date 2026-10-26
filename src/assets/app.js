@@ -3,6 +3,7 @@ function updatePreview() {
     const recipient = document.getElementById('recipient-input').value;
     const title = document.getElementById('title-input').value;
     const sub = document.getElementById('sub-input').value;
+    const presented = document.getElementById('presented-input').value;
     const coach = document.getElementById('coach-input').value;
     const coachLabel = document.getElementById('coach-label-input').value;
     const date = document.getElementById('date-input').value;
@@ -12,6 +13,7 @@ function updatePreview() {
     const email = document.getElementById('email-input').value;
     const phone = document.getElementById('phone-input').value;
 
+    document.getElementById('preview-presented').innerText = presented;
     document.getElementById('preview-tag').innerText = tag;
     document.getElementById('preview-recipient').innerText = recipient;
     document.getElementById('preview-title').innerText = title;
@@ -37,6 +39,7 @@ function updateBlankElements() {
     const isEmpty = (id) => !document.getElementById(id).value.trim();
     setBlank(document.getElementById('preview-tag'), isEmpty('tag-input'));
     setBlank(document.getElementById('preview-title'), isEmpty('title-input'));
+    setBlank(document.getElementById('preview-presented'), isEmpty('presented-input'));
     setBlank(document.getElementById('preview-recipient'), isEmpty('recipient-input'));
     setBlank(document.getElementById('preview-sub'), isEmpty('sub-input'));
     setBlank(document.getElementById('preview-coach'), isEmpty('coach-input'));
